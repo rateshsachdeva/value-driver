@@ -13,7 +13,6 @@ import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import type { Session } from 'next-auth';
 import { DarkModeToggle } from './ui/dark-mode-toggle';
-import { signOut } from 'next-auth/react';
 
 function PureChatHeader({
   chatId,
@@ -24,7 +23,7 @@ function PureChatHeader({
   chatId: string;
   selectedModelId: string;
   isReadonly: boolean;
-  session: Session | null; // <-- fixed: allow null for guests
+  session: Session | null;
 }) {
   const router = useRouter();
   const { open } = useSidebar();
@@ -63,37 +62,6 @@ function PureChatHeader({
 
       <div className="order-1 md:order-3">
         <DarkModeToggle />
-      </div>
-
-      <div className="hidden md:flex items-center gap-2 order-4 md:ml-auto">
-        {session?.user ? (
-          <>
-            <span className="text-sm text-muted-foreground">
-              {session.user.email}
-            </span>
-            <Button
-              variant="outline"
-              onClick={() => signOut()}
-            >
-              Sign Out
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              variant="outline"
-              onClick={() => router.push('/guest')}
-            >
-              Continue as Guest
-            </Button>
-            <Button
-              variant="default"
-              onClick={() => router.push('/login')}
-            >
-              Login to Your Account
-            </Button>
-          </>
-        )}
       </div>
     </header>
   );
