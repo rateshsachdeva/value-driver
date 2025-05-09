@@ -115,6 +115,15 @@ export function Chat({
     },
   });
 
+  // Create type bridge for Messages component
+  const handleSetMessages = (update: any) => {
+    if (typeof update === 'function') {
+      setMessages((prev) => update(prev) as UIMessage[]);
+    } else {
+      setMessages(update as UIMessage[]);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col min-w-0 h-dvh bg-background">
@@ -130,7 +139,7 @@ export function Chat({
           status={loading ? 'streaming' : 'ready'}
           votes={votes}
           messages={messages}
-          setMessages={setMessages}
+          setMessages={handleSetMessages}
           reload={() => null}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
@@ -158,7 +167,7 @@ export function Chat({
               attachments={attachments}
               setAttachments={setAttachments}
               messages={messages}
-              setMessages={setMessages}
+              setMessages={handleSetMessages}
               append={(msg) => setMessages((prev) => [...prev, msg])}
               selectedVisibilityType={visibilityType}
             />
@@ -180,7 +189,7 @@ export function Chat({
         setAttachments={setAttachments}
         append={(msg) => setMessages((prev) => [...prev, msg])}
         messages={messages}
-        setMessages={setMessages}
+        setMessages={handleSetMessages}
         reload={() => null}
         votes={votes}
         isReadonly={isReadonly}
