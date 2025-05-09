@@ -37,11 +37,7 @@ export function Chat({
   autoResume: boolean;
 }) {
   const { mutate } = useSWRConfig();
-
-  const { visibilityType } = useChatVisibility({
-    chatId: id,
-    initialVisibilityType,
-  });
+  const { visibilityType } = useChatVisibility({ chatId: id, initialVisibilityType });
 
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState('');
@@ -52,18 +48,9 @@ export function Chat({
   const query = searchParams.get('query');
   const [hasAppendedQuery, setHasAppendedQuery] = useState(false);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (query && !hasAppendedQuery) {
-      sendMessage(query);
-      setHasAppendedQuery(true);
-      window.history.replaceState({}, '', `/chat/${id}`);
-    }
-  }, [query, hasAppendedQuery, id]);
-
   const { data: votes } = useSWR<Array<Vote>>(
     messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
-    fetcher,
+    fetcher
   );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
@@ -72,7 +59,11 @@ export function Chat({
   const sendMessage = async (userInput: string) => {
     if (!userInput.trim()) return;
 
-    const userMessage: UIMessage = { id: generateUUID(), role: 'user', content: userInput };
+    const userMessage: UIMessage = {
+      id: generateUUID(),
+      role: 'user',
+      parts: [{ type: 'text', text: userInput }],
+    };
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
@@ -85,20 +76,37 @@ export function Chat({
 
       const data = await res.json();
 
-      const assistantMessage: UIMessage = { id: generateUUID(), role: 'assistant', content: data.message };
+      const assistantMessage: UIMessage = {
+        id: generateUUID(),
+        role: 'assistant',
+        parts: [{ type: 'text', text: data.message }],
+      };
       setMessages((prev) => [...prev, assistantMessage]);
       setThreadId(data.threadId);
     } catch (error: any) {
-      toast({
-        type: 'error',
-        description: error.message || 'Failed to send message.',
-      });
+      toast({ type: 'error', description: error.message || 'Failed to send message.' });
     } finally {
       setLoading(false);
     }
 
     mutate(unstable_serialize(getChatHistoryPaginationKey));
   };
+
+  useEffect(() => {
+    if (query && !hasAppendedQuery) {
+      sendMessage(query);
+      setHasAppendedQuery(true);
+      window.history.replaceState({}, '', `/chat/${id}`);
+    }
+  }, [query, hasAppendedQuery, id, sendMessage]);
+
+  useAutoResume({
+    autoResume,
+    initialMessages,
+    experimental_resume: undefined,
+    data: undefined,
+    setMessages,
+  });
 
   return (
     <>
@@ -110,7 +118,6 @@ export function Chat({
           isReadonly={isReadonly}
           session={session}
         />
-
         <Messages
           chatId={id}
           status={loading ? 'loading' : 'idle'}
@@ -121,7 +128,6 @@ export function Chat({
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
         />
-
         <form
           className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl"
           onSubmit={(e) => {
@@ -152,7 +158,6 @@ export function Chat({
           )}
         </form>
       </div>
-
       <Artifact
         chatId={id}
         input={input}
