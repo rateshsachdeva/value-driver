@@ -1172,3 +1172,4 @@ export const WarningIcon = ({ size = 16 }: { size?: number }) => {
     </svg>
   );
 };
+export { Moon as MoonIcon, Sun as SunIcon } from 'lucide-react';
