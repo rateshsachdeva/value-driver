@@ -140,7 +140,7 @@ export function Chat({
           votes={votes}
           messages={messages}
           setMessages={handleSetMessages}
-          reload={() => null}
+          reload={async () => null}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
         />
@@ -190,7 +190,7 @@ export function Chat({
         append={(msg) => setMessages((prev) => [...prev, msg])}
         messages={messages}
         setMessages={handleSetMessages}
-        reload={() => null}
+        reload={async () => null}
         votes={votes}
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
