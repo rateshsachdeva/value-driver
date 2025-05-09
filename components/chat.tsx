@@ -17,7 +17,7 @@ import type { Session } from 'next-auth';
 import { useSearchParams } from 'next/navigation';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
-import type { VisibilityType } from './visibility-selector';  // ✅ Import type
+import type { VisibilityType } from './visibility-selector';
 
 export function Chat({
   id,
@@ -31,9 +31,9 @@ export function Chat({
   id: string;
   initialMessages: Array<UIMessage>;
   initialChatModel: string;
-  initialVisibilityType: VisibilityType;  // ✅ Correct type
+  initialVisibilityType: VisibilityType;
   isReadonly: boolean;
-  session: Session | null; // <-- allow null here too
+  session: Session | null; // ✅ allow null safely
   autoResume: boolean;
 }) {
   const { mutate } = useSWRConfig();
@@ -144,7 +144,7 @@ export function Chat({
           chatId={id}
           selectedModelId={initialChatModel}
           isReadonly={isReadonly}
-          session={session}
+          session={session} // ✅ pass session (can be null)
         />
         <Messages
           chatId={id}
