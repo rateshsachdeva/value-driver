@@ -1,7 +1,6 @@
 'use client';
 
 import type { Attachment, UIMessage } from 'ai';
-import { useChat } from '@ai-sdk/react';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
@@ -44,57 +43,22 @@ export function Chat({
     initialVisibilityType,
   });
 
-  const {
-    messages,
-    setMessages,
-    handleSubmit,
-    input,
-    setInput,
-    append,
-    status,
-    stop,
-    reload,
-    experimental_resume,
-    data,
-  } = useChat({
-    id,
-    initialMessages,
-    experimental_throttle: 100,
-    sendExtraMessageFields: true,
-    generateId: generateUUID,
-    experimental_prepareRequestBody: (body) => ({
-      id,
-      message: body.messages.at(-1),
-      selectedChatModel: initialChatModel,
-      selectedVisibilityType: visibilityType,
-    }),
-    onFinish: () => {
-      mutate(unstable_serialize(getChatHistoryPaginationKey));
-    },
-    onError: (error) => {
-      toast({
-        type: 'error',
-        description: error.message,
-      });
-    },
-  });
+  const [messages, setMessages] = useState(initialMessages);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [threadId, setThreadId] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
-
   const [hasAppendedQuery, setHasAppendedQuery] = useState(false);
 
   useEffect(() => {
     if (query && !hasAppendedQuery) {
-      append({
-        role: 'user',
-        content: query,
-      });
-
+      sendMessage(query);
       setHasAppendedQuery(true);
       window.history.replaceState({}, '', `/chat/${id}`);
     }
-  }, [query, append, hasAppendedQuery, id]);
+  }, [query, hasAppendedQuery, id]);
 
   const { data: votes } = useSWR<Array<Vote>>(
     messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
@@ -104,13 +68,36 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
-  useAutoResume({
-    autoResume,
-    initialMessages,
-    experimental_resume,
-    data,
-    setMessages,
-  });
+  const sendMessage = async (userInput: string) => {
+    if (!userInput.trim()) return;
+
+    const userMessage = { role: 'user', content: userInput };
+    setMessages((prev) => [...prev, userMessage]);
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/assistant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userInput, threadId }),
+      });
+
+      const data = await res.json();
+
+      const assistantMessage = { role: 'assistant', content: data.message };
+      setMessages((prev) => [...prev, assistantMessage]);
+      setThreadId(data.threadId);
+    } catch (error: any) {
+      toast({
+        type: 'error',
+        description: error.message || 'Failed to send message.',
+      });
+    } finally {
+      setLoading(false);
+    }
+
+    mutate(unstable_serialize(getChatHistoryPaginationKey));
+  };
 
   return (
     <>
@@ -125,29 +112,40 @@ export function Chat({
 
         <Messages
           chatId={id}
-          status={status}
+          status={loading ? 'loading' : 'idle'}
           votes={votes}
           messages={messages}
           setMessages={setMessages}
-          reload={reload}
+          reload={() => null}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
         />
 
-        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+        <form
+          className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl"
+          onSubmit={(e) => {
+            e.preventDefault();
+            sendMessage(input);
+            setInput('');
+          }}
+        >
           {!isReadonly && (
             <MultimodalInput
               chatId={id}
               input={input}
               setInput={setInput}
-              handleSubmit={handleSubmit}
-              status={status}
-              stop={stop}
+              handleSubmit={(e) => {
+                e.preventDefault();
+                sendMessage(input);
+                setInput('');
+              }}
+              status={loading ? 'loading' : 'idle'}
+              stop={() => null}
               attachments={attachments}
               setAttachments={setAttachments}
               messages={messages}
               setMessages={setMessages}
-              append={append}
+              append={(msg) => setMessages((prev) => [...prev, msg])}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -158,15 +156,19 @@ export function Chat({
         chatId={id}
         input={input}
         setInput={setInput}
-        handleSubmit={handleSubmit}
-        status={status}
-        stop={stop}
+        handleSubmit={(e) => {
+          e.preventDefault();
+          sendMessage(input);
+          setInput('');
+        }}
+        status={loading ? 'loading' : 'idle'}
+        stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={append}
+        append={(msg) => setMessages((prev) => [...prev, msg])}
         messages={messages}
         setMessages={setMessages}
-        reload={reload}
+        reload={() => null}
         votes={votes}
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
