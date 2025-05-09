@@ -13,6 +13,7 @@ import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import type { Session } from 'next-auth';
 import { DarkModeToggle } from './ui/dark-mode-toggle';
+import { signOut } from 'next-auth/react';
 
 function PureChatHeader({
   chatId,
@@ -23,11 +24,10 @@ function PureChatHeader({
   chatId: string;
   selectedModelId: string;
   isReadonly: boolean;
-  session: Session;
+  session: Session | null; // allow null for guest
 }) {
   const router = useRouter();
   const { open } = useSidebar();
-
   const { width: windowWidth } = useWindowSize();
 
   return (
@@ -66,20 +66,36 @@ function PureChatHeader({
         <DarkModeToggle />
       </div>
 
-      {/* Guest and Login Buttons */}
+      {/* User actions (guest/login or user email + sign out) */}
       <div className="hidden md:flex items-center gap-2 order-4 md:ml-auto">
-        <Button
-          variant="outline"
-          onClick={() => router.push('/guest')}
-        >
-          Continue as Guest
-        </Button>
-        <Button
-          variant="default"
-          onClick={() => router.push('/login')}
-        >
-          Login to Your Account
-        </Button>
+        {session?.user ? (
+          <>
+            <span className="text-sm text-muted-foreground">
+              {session.user.email}
+            </span>
+            <Button
+              variant="outline"
+              onClick={() => signOut()}
+            >
+              Sign Out
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              variant="outline"
+              onClick={() => router.push('/guest')}
+            >
+              Continue as Guest
+            </Button>
+            <Button
+              variant="default"
+              onClick={() => router.push('/login')}
+            >
+              Login to Your Account
+            </Button>
+          </>
+        )}
       </div>
     </header>
   );
