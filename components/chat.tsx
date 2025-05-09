@@ -115,13 +115,20 @@ export function Chat({
     },
   });
 
-  // Create type bridge for Messages component
+  // Bridge setMessages type for Messages component
   const handleSetMessages = (update: any) => {
     if (typeof update === 'function') {
       setMessages((prev) => update(prev) as UIMessage[]);
     } else {
       setMessages(update as UIMessage[]);
     }
+  };
+
+  // Unified safe handleSubmit
+  const handleSubmit = (event?: { preventDefault?: () => void }) => {
+    event?.preventDefault?.();
+    sendMessage(input);
+    setInput('');
   };
 
   return (
@@ -157,11 +164,7 @@ export function Chat({
               chatId={id}
               input={input}
               setInput={setInput}
-              handleSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                e.preventDefault();
-                sendMessage(input);
-                setInput('');
-              }}
+              handleSubmit={handleSubmit}
               status={loading ? 'streaming' : 'ready'}
               stop={() => null}
               attachments={attachments}
@@ -178,11 +181,7 @@ export function Chat({
         chatId={id}
         input={input}
         setInput={setInput}
-        handleSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          e.preventDefault();
-          sendMessage(input);
-          setInput('');
-        }}
+        handleSubmit={handleSubmit}
         status={loading ? 'streaming' : 'ready'}
         stop={() => null}
         attachments={attachments}
