@@ -108,9 +108,11 @@ export function Chat({
   useAutoResume({
     autoResume,
     initialMessages,
-    experimental_resume: () => {},  // no-op
-    data: [],                      // empty array for JSONValue[]
-    setMessages,
+    experimental_resume: () => {},
+    data: [],
+    setMessages: (msgs) => {
+      setMessages(msgs as UIMessage[]);
+    },
   });
 
   return (
