@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
+import { signOut, useSession } from 'next-auth/react';
 
 import { ModelSelector } from '@/components/model-selector';
 import { SidebarToggle } from '@/components/sidebar-toggle';
@@ -11,23 +12,24 @@ import { PlusIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import type { Session } from 'next-auth';
 import { DarkModeToggle } from './ui/dark-mode-toggle';
+import { guestRegex } from '@/lib/constants';
 
 function PureChatHeader({
   chatId,
   selectedModelId,
   isReadonly,
-  session,
 }: {
   chatId: string;
   selectedModelId: string;
   isReadonly: boolean;
-  session: Session | null;
 }) {
   const router = useRouter();
   const { open } = useSidebar();
   const { width: windowWidth } = useWindowSize();
+  const { data: session, status } = useSession();
+
+  const isGuest = guestRegex.test(session?.user?.email ?? '');
 
   return (
     <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
@@ -60,8 +62,46 @@ function PureChatHeader({
         />
       )}
 
-      <div className="order-1 md:order-3">
-        <DarkModeToggle />
+      {!isReadonly && (
+        <div className="order-1 md:order-3">
+          <DarkModeToggle />
+        </div>
+      )}
+
+      <div className="ml-auto order-4 flex items-center space-x-2">
+        {status === 'loading' ? (
+          <span className="text-sm text-gray-500">Loading...</span>
+        ) : session ? (
+          <>
+            <span className="text-sm truncate max-w-[120px]">{session.user?.email}</span>
+            <Button
+              size="sm"
+              onClick={() =>
+                signOut({
+                  callbackUrl: '/',
+                })
+              }
+            >
+              Sign Out
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => router.push('/guest')}
+            >
+              Continue as Guest
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => router.push('/login')}
+            >
+              Login to your account
+            </Button>
+          </>
+        )}
       </div>
     </header>
   );
