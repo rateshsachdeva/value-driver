@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
+
 import { ModelSelector } from '@/components/model-selector';
 import { SidebarToggle } from '@/components/sidebar-toggle';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,8 @@ import { PlusIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { DarkModeToggle } from './ui/dark-mode-toggle';
+import { SidebarUserNav } from './sidebar-user-nav';
 import type { Session } from 'next-auth';
 
 function PureChatHeader({
@@ -27,10 +30,8 @@ function PureChatHeader({
   const { open } = useSidebar();
   const { width: windowWidth } = useWindowSize();
 
-  const isLoggedIn = !!session?.user?.email;
-
   return (
-    <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
+    <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2 z-50">
       <SidebarToggle />
 
       {(!open || windowWidth < 768) && (
@@ -52,7 +53,7 @@ function PureChatHeader({
         </Tooltip>
       )}
 
-      {!isReadonly && (
+      {!isReadonly && session && (
         <ModelSelector
           session={session}
           selectedModelId={selectedModelId}
@@ -60,27 +61,17 @@ function PureChatHeader({
         />
       )}
 
-      <div className="order-1 md:order-3 flex items-center gap-2 ml-auto">
-        {!isLoggedIn ? (
-          <>
-            <Button variant="outline" onClick={() => router.push('/login')}>
-              Login to your account
-            </Button>
-            <Button variant="outline" onClick={() => router.push('/guest')}>
-              Continue as Guest
-            </Button>
-          </>
+      {!isReadonly && (
+        <div className="order-1 md:order-3">
+          <DarkModeToggle />
+        </div>
+      )}
+
+      <div className="order-4 md:ml-auto">
+        {session ? (
+          <SidebarUserNav user={session.user} />
         ) : (
-          <span className="text-sm">
-            {session.user.email}
-            <Button
-              variant="outline"
-              className="ml-2"
-              onClick={() => router.push('/api/auth/signout')}
-            >
-              Sign Out
-            </Button>
-          </span>
+          <SidebarUserNav user={undefined} />
         )}
       </div>
     </header>
