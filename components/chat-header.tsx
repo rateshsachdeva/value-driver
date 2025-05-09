@@ -24,7 +24,7 @@ function PureChatHeader({
   chatId: string;
   selectedModelId: string;
   isReadonly: boolean;
-  session: Session | null; // allow null for guest
+  session: Session | null; // <-- fixed: allow null for guests
 }) {
   const router = useRouter();
   const { open } = useSidebar();
@@ -53,7 +53,7 @@ function PureChatHeader({
         </Tooltip>
       )}
 
-      {!isReadonly && (
+      {!isReadonly && session && (
         <ModelSelector
           session={session}
           selectedModelId={selectedModelId}
@@ -61,12 +61,10 @@ function PureChatHeader({
         />
       )}
 
-      {/* Dark Mode Toggle */}
       <div className="order-1 md:order-3">
         <DarkModeToggle />
       </div>
 
-      {/* User actions (guest/login or user email + sign out) */}
       <div className="hidden md:flex items-center gap-2 order-4 md:ml-auto">
         {session?.user ? (
           <>
