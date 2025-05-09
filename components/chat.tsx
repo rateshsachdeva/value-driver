@@ -33,7 +33,7 @@ export function Chat({
   initialChatModel: string;
   initialVisibilityType: VisibilityType;  // ✅ Correct type
   isReadonly: boolean;
-  session: Session;
+  session: Session | null; // <-- allow null here too
   autoResume: boolean;
 }) {
   const { mutate } = useSWRConfig();
