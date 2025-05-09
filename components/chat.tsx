@@ -9,7 +9,6 @@ import { fetcher, generateUUID } from '@/lib/utils';
 import { Artifact } from './artifact';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
-import type { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { unstable_serialize } from 'swr/infinite';
 import { getChatHistoryPaginationKey } from './sidebar-history';
@@ -31,7 +30,7 @@ export function Chat({
   id: string;
   initialMessages: Array<UIMessage>;
   initialChatModel: string;
-  initialVisibilityType: VisibilityType;
+  initialVisibilityType: string;
   isReadonly: boolean;
   session: Session;
   autoResume: boolean;
@@ -143,7 +142,6 @@ export function Chat({
         <ChatHeader
           chatId={id}
           selectedModelId={initialChatModel}
-          selectedVisibilityType={initialVisibilityType}
           isReadonly={isReadonly}
           session={session}
         />
