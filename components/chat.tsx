@@ -1,7 +1,7 @@
 'use client';
 
 import type { Attachment, UIMessage } from 'ai';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
@@ -56,41 +56,46 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
-  const sendMessage = async (userInput: string) => {
-    if (!userInput.trim()) return;
+  const sendMessage = useCallback(
+    async (userInput: string) => {
+      if (!userInput.trim()) return;
 
-    const userMessage: UIMessage = {
-      id: generateUUID(),
-      role: 'user',
-      parts: [{ type: 'text', text: userInput }],
-    };
-    setMessages((prev) => [...prev, userMessage]);
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/assistant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userInput, threadId }),
-      });
-
-      const data = await res.json();
-
-      const assistantMessage: UIMessage = {
+      const userMessage: UIMessage = {
         id: generateUUID(),
-        role: 'assistant',
-        parts: [{ type: 'text', text: data.message }],
+        role: 'user',
+        content: userInput,
+        parts: [{ type: 'text', text: userInput }],
       };
-      setMessages((prev) => [...prev, assistantMessage]);
-      setThreadId(data.threadId);
-    } catch (error: any) {
-      toast({ type: 'error', description: error.message || 'Failed to send message.' });
-    } finally {
-      setLoading(false);
-    }
+      setMessages((prev) => [...prev, userMessage]);
+      setLoading(true);
 
-    mutate(unstable_serialize(getChatHistoryPaginationKey));
-  };
+      try {
+        const res = await fetch('/api/assistant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: userInput, threadId }),
+        });
+
+        const data = await res.json();
+
+        const assistantMessage: UIMessage = {
+          id: generateUUID(),
+          role: 'assistant',
+          content: data.message,
+          parts: [{ type: 'text', text: data.message }],
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+        setThreadId(data.threadId);
+      } catch (error: any) {
+        toast({ type: 'error', description: error.message || 'Failed to send message.' });
+      } finally {
+        setLoading(false);
+      }
+
+      mutate(unstable_serialize(getChatHistoryPaginationKey));
+    },
+    [mutate, threadId]
+  );
 
   useEffect(() => {
     if (query && !hasAppendedQuery) {
