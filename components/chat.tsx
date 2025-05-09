@@ -157,7 +157,7 @@ export function Chat({
               chatId={id}
               input={input}
               setInput={setInput}
-              handleSubmit={(e) => {
+              handleSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                 e.preventDefault();
                 sendMessage(input);
                 setInput('');
@@ -178,7 +178,7 @@ export function Chat({
         chatId={id}
         input={input}
         setInput={setInput}
-        handleSubmit={(e) => {
+        handleSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           sendMessage(input);
           setInput('');
