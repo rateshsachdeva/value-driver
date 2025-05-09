@@ -115,20 +115,12 @@ export function Chat({
     },
   });
 
-  // Bridge setMessages type for Messages component
   const handleSetMessages = (update: any) => {
     if (typeof update === 'function') {
       setMessages((prev) => update(prev) as UIMessage[]);
     } else {
       setMessages(update as UIMessage[]);
     }
-  };
-
-  // Unified safe handleSubmit
-  const handleSubmit = (event?: { preventDefault?: () => void }) => {
-    event?.preventDefault?.();
-    sendMessage(input);
-    setInput('');
   };
 
   return (
@@ -164,14 +156,21 @@ export function Chat({
               chatId={id}
               input={input}
               setInput={setInput}
-              handleSubmit={handleSubmit}
+              handleSubmit={(e) => {
+                e?.preventDefault();
+                sendMessage(input);
+                setInput('');
+              }}
               status={loading ? 'streaming' : 'ready'}
               stop={() => null}
               attachments={attachments}
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessages}
-              append={(msg) => setMessages((prev) => [...prev, msg])}
+              append={(msg) => {
+                setMessages((prev) => [...prev, msg]);
+                return Promise.resolve(null);
+              }}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -181,12 +180,19 @@ export function Chat({
         chatId={id}
         input={input}
         setInput={setInput}
-        handleSubmit={handleSubmit}
+        handleSubmit={(e) => {
+          e?.preventDefault();
+          sendMessage(input);
+          setInput('');
+        }}
         status={loading ? 'streaming' : 'ready'}
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={(msg) => setMessages((prev) => [...prev, msg])}
+        append={(msg) => {
+          setMessages((prev) => [...prev, msg]);
+          return Promise.resolve(null);
+        }}
         messages={messages}
         setMessages={handleSetMessages}
         reload={async () => null}
