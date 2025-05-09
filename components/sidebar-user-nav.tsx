@@ -22,7 +22,7 @@ import { toast } from './toast';
 import { LoaderIcon } from './icons';
 import { guestRegex } from '@/lib/constants';
 
-export function SidebarUserNav({ user }: { user: User }) {
+export function SidebarUserNav({ user }: { user?: User }) {
   const router = useRouter();
   const { data, status } = useSession();
   const { setTheme, theme } = useTheme();
@@ -46,8 +46,11 @@ export function SidebarUserNav({ user }: { user: User }) {
                   <LoaderIcon />
                 </div>
               </SidebarMenuButton>
-            ) : (
-              <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent bg-background data-[state=open]:text-sidebar-accent-foreground h-10">
+            ) : user ? (
+              <SidebarMenuButton
+                data-testid="user-nav-button"
+                className="data-[state=open]:bg-sidebar-accent bg-background data-[state=open]:text-sidebar-accent-foreground h-10"
+              >
                 <Image
                   src={`https://avatar.vercel.sh/${user.email}`}
                   alt={user.email ?? 'User Avatar'}
@@ -55,20 +58,32 @@ export function SidebarUserNav({ user }: { user: User }) {
                   height={24}
                   className="rounded-full"
                 />
-                <span className="truncate">{isGuest ? 'Guest' : user?.email}</span>
+                <span data-testid="user-email" className="truncate">
+                  {isGuest ? 'Guest' : user.email}
+                </span>
                 <ChevronUp className="ml-auto" />
+              </SidebarMenuButton>
+            ) : (
+              <SidebarMenuButton className="bg-background h-10">
+                <span>Continue as Guest</span>
               </SidebarMenuButton>
             )}
           </DropdownMenuTrigger>
-          <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
+
+          <DropdownMenuContent
+            data-testid="user-nav-menu"
+            side="top"
+            className="w-[--radix-popper-anchor-width]"
+          >
             <DropdownMenuItem
+              data-testid="user-nav-item-theme"
               className="cursor-pointer"
               onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
-              {`Toggle ${theme === 'light' ? 'dark' : 'light'} mode`}
+              {`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild data-testid="user-nav-item-auth">
               <button
                 type="button"
                 className="w-full cursor-pointer"
@@ -76,19 +91,22 @@ export function SidebarUserNav({ user }: { user: User }) {
                   if (status === 'loading') {
                     toast({
                       type: 'error',
-                      description: 'Checking authentication status, please try again!',
+                      description:
+                        'Checking authentication status, please try again!',
                     });
                     return;
                   }
 
-                  if (isGuest) {
+                  if (isGuest || !user) {
                     router.push('/login');
                   } else {
-                    signOut({ redirect: true, callbackUrl: '/' });
+                    signOut({
+                      callbackUrl: '/',
+                    });
                   }
                 }}
               >
-                {isGuest ? 'Login to your account' : 'Sign out'}
+                {isGuest || !user ? 'Login to your account' : 'Sign out'}
               </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
