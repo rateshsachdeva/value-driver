@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
 
@@ -11,8 +10,6 @@ import { PlusIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { DarkModeToggle } from './ui/dark-mode-toggle';
-import { SidebarUserNav } from './sidebar-user-nav';
 import type { Session } from 'next-auth';
 
 function PureChatHeader({
@@ -60,20 +57,6 @@ function PureChatHeader({
           className="order-1 md:order-2"
         />
       )}
-
-      {!isReadonly && (
-        <div className="order-1 md:order-3">
-          <DarkModeToggle />
-        </div>
-      )}
-
-      <div className="order-4 md:ml-auto">
-        {session ? (
-          <SidebarUserNav user={session.user} />
-        ) : (
-          <SidebarUserNav user={undefined} />
-        )}
-      </div>
     </header>
   );
 }
