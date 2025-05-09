@@ -127,7 +127,7 @@ export function Chat({
         />
         <Messages
           chatId={id}
-          status={loading ? 'loading' : 'idle'}
+          status={loading ? 'streaming' : 'ready'} {/* FIXED HERE */}
           votes={votes}
           messages={messages}
           setMessages={setMessages}
@@ -153,7 +153,7 @@ export function Chat({
                 sendMessage(input);
                 setInput('');
               }}
-              status={loading ? 'loading' : 'idle'}
+              status={loading ? 'streaming' : 'ready'} {/* FIXED HERE */}
               stop={() => null}
               attachments={attachments}
               setAttachments={setAttachments}
@@ -174,7 +174,7 @@ export function Chat({
           sendMessage(input);
           setInput('');
         }}
-        status={loading ? 'loading' : 'idle'}
+        status={loading ? 'streaming' : 'ready'} {/* FIXED HERE */}
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
