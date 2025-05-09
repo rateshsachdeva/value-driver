@@ -34,14 +34,17 @@ export async function POST(req: NextRequest) {
   const messages = await openai.beta.threads.messages.list(thread.id);
   const assistantMessage = messages.data.find((msg) => msg.role === 'assistant');
 
-  // Safely extract text content from assistant message
   let text = 'No response';
-  if (assistantMessage?.content) {
-    const textContent = assistantMessage.content.find(
-      (c: any) => c.type === 'text'
-    );
-    if (textContent && 'text' in textContent && textContent.text?.value) {
-      text = textContent.text.value;
+  if (assistantMessage?.content && Array.isArray(assistantMessage.content)) {
+    const textContent = assistantMessage.content.find((c) => c.type === 'text');
+    if (
+      textContent &&
+      typeof textContent === 'object' &&
+      'text' in textContent &&
+      textContent.text &&
+      'value' in textContent.text
+    ) {
+      text = textContent.text.value as string;
     }
   }
 
