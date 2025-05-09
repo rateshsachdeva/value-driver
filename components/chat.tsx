@@ -108,8 +108,8 @@ export function Chat({
   useAutoResume({
     autoResume,
     initialMessages,
-    experimental_resume: () => {},  // no-op function
-    data: {},                      // empty object as fallback
+    experimental_resume: () => {},  // no-op
+    data: [],                      // empty array for JSONValue[]
     setMessages,
   });
 
