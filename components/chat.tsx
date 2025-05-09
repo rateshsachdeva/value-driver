@@ -52,6 +52,7 @@ export function Chat({
   const query = searchParams.get('query');
   const [hasAppendedQuery, setHasAppendedQuery] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (query && !hasAppendedQuery) {
       sendMessage(query);
@@ -71,7 +72,7 @@ export function Chat({
   const sendMessage = async (userInput: string) => {
     if (!userInput.trim()) return;
 
-    const userMessage = { role: 'user', content: userInput };
+    const userMessage: UIMessage = { id: generateUUID(), role: 'user', content: userInput };
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
@@ -84,7 +85,7 @@ export function Chat({
 
       const data = await res.json();
 
-      const assistantMessage = { role: 'assistant', content: data.message };
+      const assistantMessage: UIMessage = { id: generateUUID(), role: 'assistant', content: data.message };
       setMessages((prev) => [...prev, assistantMessage]);
       setThreadId(data.threadId);
     } catch (error: any) {
