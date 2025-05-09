@@ -39,7 +39,7 @@ export function Chat({
   const { mutate } = useSWRConfig();
   const { visibilityType } = useChatVisibility({ chatId: id, initialVisibilityType });
 
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState<UIMessage[]>(initialMessages);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [threadId, setThreadId] = useState<string | null>(null);
@@ -115,11 +115,13 @@ export function Chat({
     },
   });
 
-  const handleSetMessages = (update: any) => {
+  const handleSetMessages = (
+    update: UIMessage[] | ((prev: UIMessage[]) => UIMessage[])
+  ) => {
     if (typeof update === 'function') {
-      setMessages((prev) => update(prev) as UIMessage[]);
+      setMessages((prev) => update(prev));
     } else {
-      setMessages(update as UIMessage[]);
+      setMessages(update);
     }
   };
 
@@ -129,6 +131,11 @@ export function Chat({
     }
     sendMessage(input);
     setInput('');
+    return Promise.resolve(null);
+  };
+
+  const handleAppend = (msg: unknown) => {
+    setMessages((prev) => [...prev, msg as UIMessage]);
     return Promise.resolve(null);
   };
 
@@ -172,10 +179,7 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessages}
-              append={(msg) => {
-                setMessages((prev) => [...prev, msg]);
-                return Promise.resolve(null);
-              }}
+              append={handleAppend}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -190,10 +194,7 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={(msg) => {
-          setMessages((prev) => [...prev, msg]);
-          return Promise.resolve(null);
-        }}
+        append={handleAppend}
         messages={messages}
         setMessages={handleSetMessages}
         reload={async () => null}
