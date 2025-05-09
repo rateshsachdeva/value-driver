@@ -6,8 +6,8 @@ import { signOut, useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { toast } from './toast';
-import { guestRegex } from '@/lib/constants';
 import { LoaderIcon } from './icons';
+import { guestRegex } from '@/lib/constants';
 
 export function SidebarUserNav({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -17,13 +17,15 @@ export function SidebarUserNav({ user }: { user: User | undefined }) {
   const isGuest = guestRegex.test(data?.user?.email ?? '');
 
   return (
-    <div className="flex flex-col p-2 gap-2">
+    <div className="flex flex-col p-2 gap-2 text-sm">
       <div className="flex items-center gap-2">
         {status === 'loading' ? (
           <>
-            <div className="w-6 h-6 bg-zinc-500/30 rounded-full animate-pulse" />
-            <span className="text-sm text-zinc-500 animate-pulse">Loading...</span>
-            <LoaderIcon className="animate-spin ml-auto" />
+            <div className="size-6 bg-zinc-500/30 rounded-full animate-pulse" />
+            <span className="bg-zinc-500/30 text-transparent rounded-md animate-pulse">
+              Loading...
+            </span>
+            <LoaderIcon className="animate-spin ml-auto text-zinc-500" />
           </>
         ) : (
           <>
@@ -34,22 +36,20 @@ export function SidebarUserNav({ user }: { user: User | undefined }) {
               height={24}
               className="rounded-full"
             />
-            <span className="truncate text-sm">
-              {isGuest ? 'Guest' : user?.email}
-            </span>
+            <span className="truncate">{isGuest ? 'Guest' : user?.email}</span>
           </>
         )}
       </div>
 
       <button
-        className="text-left text-sm hover:underline"
+        className="text-left hover:underline"
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       >
         {`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
       </button>
 
       <button
-        className="text-left text-sm hover:underline"
+        className="text-left hover:underline"
         onClick={() => {
           if (status === 'loading') {
             toast({
