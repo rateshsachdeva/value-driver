@@ -1,6 +1,6 @@
 'use client';
 
-import type { Attachment, UIMessage } from 'ai';
+import type { Attachment, UIMessage, Message } from 'ai';
 import { useEffect, useState, useCallback } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
@@ -115,20 +115,18 @@ export function Chat({
     },
   });
 
-  const handleSetMessages = (
-    update: UIMessage[] | ((prev: UIMessage[]) => UIMessage[])
+  const handleSetMessagesForMessagesComponent = (
+    update: Message[] | ((messages: Message[]) => Message[])
   ) => {
     if (typeof update === 'function') {
-      setMessages((prev) => update(prev));
+      setMessages((prev) => update(prev) as UIMessage[]);
     } else {
-      setMessages(update);
+      setMessages(update as UIMessage[]);
     }
   };
 
   const handleSubmit = (event?: { preventDefault?: () => void }) => {
-    if (event?.preventDefault) {
-      event.preventDefault();
-    }
+    if (event?.preventDefault) event.preventDefault();
     sendMessage(input);
     setInput('');
     return Promise.resolve(null);
@@ -154,7 +152,7 @@ export function Chat({
           status={loading ? 'streaming' : 'ready'}
           votes={votes}
           messages={messages}
-          setMessages={handleSetMessages}
+          setMessages={handleSetMessagesForMessagesComponent}
           reload={async () => null}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
@@ -178,7 +176,7 @@ export function Chat({
               attachments={attachments}
               setAttachments={setAttachments}
               messages={messages}
-              setMessages={handleSetMessages}
+              setMessages={handleSetMessagesForMessagesComponent}
               append={handleAppend}
               selectedVisibilityType={visibilityType}
             />
@@ -196,7 +194,7 @@ export function Chat({
         setAttachments={setAttachments}
         append={handleAppend}
         messages={messages}
-        setMessages={handleSetMessages}
+        setMessages={handleSetMessagesForMessagesComponent}
         reload={async () => null}
         votes={votes}
         isReadonly={isReadonly}
