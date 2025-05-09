@@ -11,9 +11,8 @@ import { PlusIcon, VercelIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-// import { type VisibilityType, VisibilitySelector } from './visibility-selector';
 import type { Session } from 'next-auth';
-import { DarkModeToggle } from './ui/dark-mode-toggle'; // Make sure you have this component
+import { DarkModeToggle } from './ui/dark-mode-toggle';
 
 function PureChatHeader({
   chatId,
@@ -62,7 +61,6 @@ function PureChatHeader({
         />
       )}
 
-      {/* Replace VisibilitySelector with DarkModeToggle */}
       {!isReadonly && (
         <div className="order-1 md:order-3">
           <DarkModeToggle />
@@ -75,7 +73,7 @@ function PureChatHeader({
       >
         <Link
           href={`https://vercel.com/new/clone?repository-url=https://github.com/vercel/ai-chatbot&env=AUTH_SECRET&envDescription=Learn more about how to get the API Keys for the application&envLink=https://github.com/vercel/ai-chatbot/blob/main/.env.example&demo-title=AI Chatbot&demo-description=An Open-Source AI Chatbot Template Built With Next.js and the AI SDK by Vercel.&demo-url=https://chat.vercel.ai&products=[{"type":"integration","protocol":"ai","productSlug":"grok","integrationSlug":"xai"},{"type":"integration","protocol":"storage","productSlug":"neon","integrationSlug":"neon"},{"type":"blob"}]`}
-          target="_noblank"
+          target="_blank"
         >
           <VercelIcon size={16} />
           Deploy with Vercel
