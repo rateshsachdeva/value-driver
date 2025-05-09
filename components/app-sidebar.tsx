@@ -61,7 +61,9 @@ export function AppSidebar({ user }: { user: User | undefined }) {
       <SidebarContent>
         <SidebarHistory user={user} />
       </SidebarContent>
-      <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
+      <SidebarFooter>
+        <SidebarUserNav user={user} /> {/* ✅ always show, even if user is undefined */}
+      </SidebarFooter>
     </Sidebar>
   );
 }
