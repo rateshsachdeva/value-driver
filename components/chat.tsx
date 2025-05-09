@@ -115,13 +115,21 @@ export function Chat({
     },
   });
 
-  // Bridge handler for Messages component
   const handleSetMessages = (update: any) => {
     if (typeof update === 'function') {
       setMessages((prev) => update(prev) as UIMessage[]);
     } else {
       setMessages(update as UIMessage[]);
     }
+  };
+
+  const handleSubmit = (event?: { preventDefault?: () => void }) => {
+    if (event?.preventDefault) {
+      event.preventDefault();
+    }
+    sendMessage(input);
+    setInput('');
+    return Promise.resolve(null);
   };
 
   return (
@@ -157,11 +165,7 @@ export function Chat({
               chatId={id}
               input={input}
               setInput={setInput}
-              handleSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                e.preventDefault();
-                sendMessage(input);
-                setInput('');
-              }}
+              handleSubmit={handleSubmit}
               status={loading ? 'streaming' : 'ready'}
               stop={() => null}
               attachments={attachments}
@@ -181,11 +185,7 @@ export function Chat({
         chatId={id}
         input={input}
         setInput={setInput}
-        handleSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          e.preventDefault();
-          sendMessage(input);
-          setInput('');
-        }}
+        handleSubmit={handleSubmit}
         status={loading ? 'streaming' : 'ready'}
         stop={() => null}
         attachments={attachments}
