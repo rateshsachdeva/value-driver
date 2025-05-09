@@ -25,7 +25,9 @@ export function SidebarUserNav({ user }: { user: User | undefined }) {
             <span className="bg-zinc-500/30 text-transparent rounded-md animate-pulse">
               Loading...
             </span>
-            <LoaderIcon className="animate-spin ml-auto text-zinc-500" />
+            <span className="animate-spin ml-auto text-zinc-500">
+              <LoaderIcon size={20} />
+            </span>
           </>
         ) : (
           <>
