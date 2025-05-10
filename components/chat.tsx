@@ -99,29 +99,8 @@ export function Chat({
     [mutate, threadId]
   );
 
-  // ✅ For MultimodalInput
-  const wrappedAppendForMultimodal = async (message: CreateMessage): Promise<void> => {
-    let content: string | undefined;
-
-    if ('content' in message && typeof message.content === 'string') {
-      content = message.content;
-    } else if ('parts' in message && Array.isArray(message.parts)) {
-      const textPart = message.parts.find((part) => part.type === 'text');
-      if (textPart && 'text' in textPart) {
-        content = textPart.text;
-      }
-    }
-
-    if (!content) {
-      console.warn('No text content found in CreateMessage');
-      return;
-    }
-
-    await sendMessage(content);
-  };
-
-  // ✅ For Artifact
-  const wrappedAppendForArtifact = async (
+  // ✅ For MultimodalInput → expects Promise<string | null | undefined>
+  const wrappedAppendForMultimodal = async (
     message: Message | CreateMessage,
     _chatRequestOptions?: any
   ): Promise<string | null | undefined> => {
@@ -142,6 +121,27 @@ export function Chat({
     }
 
     return await sendMessage(content);
+  };
+
+  // ✅ For Artifact → expects Promise<void>
+  const wrappedAppendForArtifact = async (message: CreateMessage): Promise<void> => {
+    let content: string | undefined;
+
+    if ('content' in message && typeof message.content === 'string') {
+      content = message.content;
+    } else if ('parts' in message && Array.isArray(message.parts)) {
+      const textPart = message.parts.find((part) => part.type === 'text');
+      if (textPart && 'text' in textPart) {
+        content = textPart.text;
+      }
+    }
+
+    if (!content) {
+      console.warn('No text content found in CreateMessage');
+      return;
+    }
+
+    await sendMessage(content);
   };
 
   useEffect(() => {
