@@ -411,7 +411,7 @@ function PureArtifact({
                   <Toolbar
                     isToolbarVisible={isToolbarVisible}
                     setIsToolbarVisible={setIsToolbarVisible}
-                    append={(message) => append(message).then(() => {})}
+                    append={wrappedAppend}
                     status={status}
                     stop={stop}
                     setMessages={setMessages}
