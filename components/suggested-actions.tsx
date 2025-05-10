@@ -5,10 +5,12 @@ import { Button } from './ui/button';
 import { memo } from 'react';
 import type { UseChatHelpers } from '@ai-sdk/react';
 import type { VisibilityType } from './visibility-selector';
+import { generateUUID } from '@/lib/utils';
+import type { UIMessage } from 'ai';
 
 interface SuggestedActionsProps {
   chatId: string;
-  append: UseChatHelpers['append'];
+  append: (msg: UIMessage) => Promise<null>;
   selectedVisibilityType: VisibilityType;
 }
 
@@ -48,10 +50,13 @@ function PureSuggestedActions({
         >
           <Button
             variant="ghost"
-            onClick={() => {
-              append({
+            onClick={async () => {
+              window.history.replaceState({}, '', `/chat/${chatId}`);
+              await append({
+                id: generateUUID(),
                 role: 'user',
                 content: suggestedAction.desc,
+                parts: [{ type: 'text', text: suggestedAction.desc }],
               });
             }}
             className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 w-full h-auto justify-start whitespace-normal break-words"
@@ -71,5 +76,5 @@ export const SuggestedActions = memo(
     if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
       return false;
     return true;
-  },
+  }
 );
