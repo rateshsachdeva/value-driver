@@ -16,20 +16,9 @@ export const Greeting = () => {
       </h2>
 
       <p>
-        <strong>Here’s how we’ll kick things off:</strong><br />
-        📌 I’ll give you a quick <strong>Industry Summary</strong> — how companies in your space make money, 
-        what risks to watch for, and what matters most to investors.<br />
-        📊 Then, I’ll map out a detailed <strong>Value Driver Tree</strong> covering EBITDA, Working Capital, 
-        Capex, and Capital Structure.
-      </p>
+        First, I’ll share an Industry Summary and a detailed Value Driver Tree. Then, I’ll check if you’d like a tailored Information Request List.
 
-      <p>
-        After that, I’ll check in to see if you want me to prepare a tailored 
-        <strong> Information Request List</strong> to help you dig deeper.
-      </p>
-
-      <p>
-        Just let me know your industry or a bit about the business, and we can get started!
+Just tell me your industry or business, and we’re off!
       </p>
 
       {status === 'loading' ? (
