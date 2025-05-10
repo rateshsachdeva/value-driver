@@ -1,5 +1,6 @@
 import type { Attachment, UIMessage } from 'ai';
 import { formatDistance } from 'date-fns';
+import type { CreateMessage } from '@ai-sdk/react';
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -225,8 +226,6 @@ function PureArtifact({
       });
     }
   }, [artifact.documentId, artifactDefinition, setMetadata]);
-
-  import type { CreateMessage } from '@ai-sdk/react';
 
   const wrappedAppend = (message: CreateMessage) => append(message).then(() => undefined);
   
