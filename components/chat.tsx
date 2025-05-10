@@ -18,7 +18,6 @@ import { useSearchParams } from 'next/navigation';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import type { VisibilityType } from './visibility-selector';
-import { SuggestedActions } from './suggested-actions';
 
 export function Chat({
   id,
@@ -59,7 +58,7 @@ export function Chat({
 
   const sendMessage = useCallback(
     async (userInput: string) => {
-      if (!userInput.trim()) return;
+      if (!userInput.trim()) return null;
 
       const userMessage: UIMessage = {
         id: generateUUID(),
@@ -94,6 +93,7 @@ export function Chat({
       }
 
       mutate(unstable_serialize(getChatHistoryPaginationKey));
+      return null;
     },
     [mutate, threadId]
   );
@@ -133,12 +133,6 @@ export function Chat({
     return Promise.resolve(null);
   };
 
-  const handleAppend = async (msg: UIMessage) => {
-    setMessages((prev) => [...prev, msg]);
-    sendMessage(msg.content);
-    return Promise.resolve(null);
-  };
-
   return (
     <>
       <div className="flex flex-col min-w-0 h-dvh bg-background">
@@ -158,13 +152,6 @@ export function Chat({
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
         />
-        <div className="mx-auto w-full md:max-w-3xl px-4">
-          <SuggestedActions
-            chatId={id}
-            append={handleAppend}
-            selectedVisibilityType={visibilityType}
-          />
-        </div>
         <form
           className="flex mx-auto px-4 bg-background pb-2 md:pb-3 gap-2 w-full md:max-w-3xl"
           onSubmit={(e) => {
@@ -185,7 +172,11 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessagesForMessagesComponent}
-              append={handleAppend}
+              append={(message) => {
+                const userContent =
+                  typeof message === 'string' ? message : message.content;
+                return sendMessage(userContent);
+              }}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -206,7 +197,11 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={handleAppend}
+        append={(message) => {
+          const userContent =
+            typeof message === 'string' ? message : message.content;
+          return sendMessage(userContent);
+        }}
         messages={messages}
         setMessages={handleSetMessagesForMessagesComponent}
         reload={async () => null}
