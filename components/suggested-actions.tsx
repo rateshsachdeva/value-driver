@@ -3,12 +3,12 @@
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { memo } from 'react';
-import type { UseChatHelpers } from '@ai-sdk/react';
+import type { UseChatHelpers, CreateMessage } from '@ai-sdk/react';
 import type { VisibilityType } from './visibility-selector';
 
 interface SuggestedActionsProps {
   chatId: string;
-  append: (message: string) => Promise<null>;
+  append: UseChatHelpers['append'];
   selectedVisibilityType: VisibilityType;
 }
 
@@ -49,7 +49,10 @@ function PureSuggestedActions({
             variant="ghost"
             onClick={() => {
               window.history.replaceState({}, '', `/chat/${chatId}`);
-              append(suggestedAction.desc);
+              append({
+                role: 'user',
+                content: suggestedAction.desc,
+              } as CreateMessage);
             }}
             className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 w-full h-auto justify-start whitespace-normal break-words"
           >
