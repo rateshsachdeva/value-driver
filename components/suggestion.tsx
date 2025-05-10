@@ -3,39 +3,23 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useWindowSize } from 'usehooks-ts';
-
 import type { UISuggestion } from '@/lib/editor/suggestions';
-
 import { CrossIcon, MessageIcon } from './icons';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { ArtifactKind } from './artifact';
-import type { Message, CreateMessage } from '@ai-sdk/react';
-
-interface SuggestionProps {
-  suggestion: UISuggestion;
-  onApply: () => void;
-  artifactKind: ArtifactKind;
-  append: (message: Message | CreateMessage) => Promise<void>;
-}
 
 export const Suggestion = ({
   suggestion,
   onApply,
   artifactKind,
-  append,
-}: SuggestionProps) => {
+}: {
+  suggestion: UISuggestion;
+  onApply: () => void;
+  artifactKind: ArtifactKind;
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { width: windowWidth } = useWindowSize();
-
-  const handleApply = async () => {
-    await append({
-      role: 'user',
-      content: suggestion.description,
-    });
-    onApply();
-    setIsExpanded(false);
-  };
 
   return (
     <AnimatePresence>
@@ -45,9 +29,7 @@ export const Suggestion = ({
             'absolute -right-8': artifactKind === 'text',
             'sticky top-0 right-4': artifactKind === 'code',
           })}
-          onClick={() => {
-            setIsExpanded(true);
-          }}
+          onClick={() => setIsExpanded(true)}
           whileHover={{ scale: 1.1 }}
         >
           <MessageIcon size={windowWidth && windowWidth < 768 ? 16 : 14} />
@@ -70,9 +52,7 @@ export const Suggestion = ({
             <button
               type="button"
               className="text-xs text-gray-500 cursor-pointer"
-              onClick={() => {
-                setIsExpanded(false);
-              }}
+              onClick={() => setIsExpanded(false)}
             >
               <CrossIcon size={12} />
             </button>
@@ -81,7 +61,7 @@ export const Suggestion = ({
           <Button
             variant="outline"
             className="w-fit py-1.5 px-3 rounded-full"
-            onClick={handleApply}
+            onClick={onApply}
           >
             Apply
           </Button>
@@ -90,3 +70,6 @@ export const Suggestion = ({
     </AnimatePresence>
   );
 };
+
+// ✅ EXPORT AS SuggestedActions
+export { Suggestion as SuggestedActions };
