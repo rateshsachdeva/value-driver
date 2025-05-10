@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from './toast';
 import { LoaderIcon } from './icons';
 import { guestRegex } from '@/lib/constants';
+import { Moon, Sun, LogIn, LogOut } from 'lucide-react';
 
 export function SidebarUserNav({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -44,14 +45,24 @@ export function SidebarUserNav({ user }: { user: User | undefined }) {
       </div>
 
       <button
-        className="text-left hover:underline"
+        className="flex items-center gap-2 text-left hover:underline"
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       >
-        {`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        {theme === 'light' ? (
+          <>
+            <Moon size={16} />
+            Switch to dark mode
+          </>
+        ) : (
+          <>
+            <Sun size={16} />
+            Switch to light mode
+          </>
+        )}
       </button>
 
       <button
-        className="text-left hover:underline"
+        className="flex items-center gap-2 text-left hover:underline"
         onClick={() => {
           if (status === 'loading') {
             toast({
@@ -67,7 +78,17 @@ export function SidebarUserNav({ user }: { user: User | undefined }) {
           }
         }}
       >
-        {isGuest ? 'Login to your account' : 'Sign out'}
+        {isGuest ? (
+          <>
+            <LogIn size={16} />
+            Login to your account
+          </>
+        ) : (
+          <>
+            <LogOut size={16} />
+            Sign out
+          </>
+        )}
       </button>
     </div>
   );
