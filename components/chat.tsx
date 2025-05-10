@@ -18,6 +18,7 @@ import { useSearchParams } from 'next/navigation';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import type { VisibilityType } from './visibility-selector';
+import type { CreateMessage } from '@ai-sdk/react';
 
 export function Chat({
   id,
@@ -98,6 +99,11 @@ export function Chat({
     [mutate, threadId]
   );
 
+  // Wrap sendMessage in the correct append signature
+  const wrappedAppend = async (message: CreateMessage) => {
+    await sendMessage(message.content);
+  };
+
   useEffect(() => {
     if (query && !hasAppendedQuery) {
       sendMessage(query);
@@ -172,11 +178,7 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessagesForMessagesComponent}
-              append={(message) => {
-                const userContent =
-                  typeof message === 'string' ? message : message.content;
-                return sendMessage(userContent);
-              }}
+              append={wrappedAppend}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -197,11 +199,7 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={(message) => {
-          const userContent =
-            typeof message === 'string' ? message : message.content;
-          return sendMessage(userContent);
-        }}
+        append={wrappedAppend}
         messages={messages}
         setMessages={handleSetMessagesForMessagesComponent}
         reload={async () => null}
