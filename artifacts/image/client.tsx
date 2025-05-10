@@ -3,12 +3,21 @@ import { CopyIcon, RedoIcon, UndoIcon } from '@/components/icons';
 import { ImageEditor } from '@/components/image-editor';
 import { toast } from 'sonner';
 
-export const imageArtifact = new Artifact({
+type ImageArtifactData = {
+  content: string;
+  isVisible: boolean;
+  title: string;
+  documentId: string;
+  kind: string;
+  status: string;
+};
+
+export const imageArtifact = new Artifact<'image', {}>({
   kind: 'image',
   description: 'Useful for image generation',
   onStreamPart: ({ streamPart, setArtifact }) => {
     if (streamPart.type === 'image-delta') {
-      setArtifact((draftArtifact) => ({
+      setArtifact((draftArtifact: ImageArtifactData) => ({
         ...draftArtifact,
         content: streamPart.content as string,
         isVisible: true,
@@ -24,13 +33,7 @@ export const imageArtifact = new Artifact({
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('prev');
       },
-      isDisabled: ({ currentVersionIndex }) => {
-        if (currentVersionIndex === 0) {
-          return true;
-        }
-
-        return false;
-      },
+      isDisabled: ({ currentVersionIndex }) => currentVersionIndex === 0,
     },
     {
       icon: <RedoIcon size={18} />,
@@ -38,13 +41,7 @@ export const imageArtifact = new Artifact({
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('next');
       },
-      isDisabled: ({ isCurrentVersion }) => {
-        if (isCurrentVersion) {
-          return true;
-        }
-
-        return false;
-      },
+      isDisabled: ({ isCurrentVersion }) => isCurrentVersion,
     },
     {
       icon: <CopyIcon size={18} />,
