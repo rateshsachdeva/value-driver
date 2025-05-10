@@ -1,5 +1,6 @@
 import type { Attachment, UIMessage } from 'ai';
 import { formatDistance } from 'date-fns';
+import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   type Dispatch,
