@@ -1,5 +1,6 @@
 import { auth } from '@/app/(auth)/auth';
-import type { ArtifactKind } from '@/components/artifact';
+// REMOVE the next line because ArtifactKind is no longer exported:
+// import type { ArtifactKind } from '@/components/artifact';
 import {
   deleteDocumentsByIdAfterTimestamp,
   getDocumentsById,
@@ -53,8 +54,8 @@ export async function POST(request: Request) {
     content,
     title,
     kind,
-  }: { content: string; title: string; kind: ArtifactKind } =
-    await request.json();
+  }: { content: string; title: string; kind: string } = await request.json();
+  // Notice: changed `kind: ArtifactKind` to `kind: string`
 
   const documents = await getDocumentsById({ id });
 
