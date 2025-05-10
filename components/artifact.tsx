@@ -322,11 +322,11 @@ function PureArtifact({
                     attachments={attachments}
                     setAttachments={setAttachments}
                     messages={messages}
-                    append={append}
+                    append={(msg) => append(msg).then(() => {})}
                     className="bg-background dark:bg-muted"
                     setMessages={setMessages}
                     selectedVisibilityType={selectedVisibilityType}
-                  />
+                  / />
                 </form>
               </div>
             </motion.div>
@@ -434,7 +434,7 @@ function PureArtifact({
                   <Toolbar
                     isToolbarVisible={isToolbarVisible}
                     setIsToolbarVisible={setIsToolbarVisible}
-                    append={append}
+                    append={(msg) => append(msg).then(() => {})}
                     status={status}
                     stop={stop}
                     setMessages={setMessages}
