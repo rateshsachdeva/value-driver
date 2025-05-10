@@ -226,7 +226,10 @@ function PureArtifact({
     }
   }, [artifact.documentId, artifactDefinition, setMetadata]);
 
-  const wrappedAppend = (message) => append(message).then(() => undefined);
+  import type { CreateMessage } from '@ai-sdk/react';
+
+  const wrappedAppend = (message: CreateMessage) => append(message).then(() => undefined);
+  
   return (
     <AnimatePresence>
       {artifact.isVisible && (
