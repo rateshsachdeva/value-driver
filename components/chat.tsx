@@ -58,8 +58,8 @@ export function Chat({
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   const sendMessage = useCallback(
-    async (userInput: string): Promise<void> => {
-      if (!userInput.trim()) return;
+    async (userInput: string): Promise<string | null | undefined> => {
+      if (!userInput.trim()) return null;
 
       const userMessage: UIMessage = {
         id: generateUUID(),
@@ -87,8 +87,10 @@ export function Chat({
         };
         setMessages((prev) => [...prev, assistantMessage]);
         setThreadId(data.threadId);
+        return data.message;
       } catch (error: any) {
         toast({ type: 'error', description: error.message || 'Failed to send message.' });
+        return null;
       } finally {
         setLoading(false);
         mutate(unstable_serialize(getChatHistoryPaginationKey));
@@ -97,8 +99,8 @@ export function Chat({
     [mutate, threadId]
   );
 
-  // ✅ Compatible append function that returns Promise<void>
-  const wrappedAppend = async (message: CreateMessage): Promise<void> => {
+  // ✅ For MultimodalInput
+  const wrappedAppendForMultimodal = async (message: CreateMessage): Promise<void> => {
     let content: string | undefined;
 
     if ('content' in message && typeof message.content === 'string') {
@@ -116,6 +118,30 @@ export function Chat({
     }
 
     await sendMessage(content);
+  };
+
+  // ✅ For Artifact
+  const wrappedAppendForArtifact = async (
+    message: Message | CreateMessage,
+    _chatRequestOptions?: any
+  ): Promise<string | null | undefined> => {
+    let content: string | undefined;
+
+    if ('content' in message && typeof message.content === 'string') {
+      content = message.content;
+    } else if ('parts' in message && Array.isArray(message.parts)) {
+      const textPart = message.parts.find((part) => part.type === 'text');
+      if (textPart && 'text' in textPart) {
+        content = textPart.text;
+      }
+    }
+
+    if (!content) {
+      console.warn('No text content found in Message or CreateMessage');
+      return null;
+    }
+
+    return await sendMessage(content);
   };
 
   useEffect(() => {
@@ -150,7 +176,7 @@ export function Chat({
     if (event?.preventDefault) event.preventDefault();
     sendMessage(input);
     setInput('');
-    return Promise.resolve();
+    return Promise.resolve(null);
   };
 
   return (
@@ -192,7 +218,7 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessagesForMessagesComponent}
-              append={wrappedAppend}
+              append={wrappedAppendForMultimodal}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -213,7 +239,7 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={wrappedAppend}
+        append={wrappedAppendForArtifact}
         messages={messages}
         setMessages={handleSetMessagesForMessagesComponent}
         reload={async () => null}
