@@ -10,6 +10,7 @@ import { PlusIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { DarkModeToggle } from './ui/dark-mode-toggle'; // ✅ Import dark mode toggle
 import type { Session } from 'next-auth';
 
 function PureChatHeader({
@@ -57,6 +58,12 @@ function PureChatHeader({
           className="order-1 md:order-2"
         />
       )}
+
+      {/* ✅ Dark mode toggle always visible on the right */}
+      <div className="ml-auto flex items-center gap-2 order-3">
+        <DarkModeToggle />
+        {/* Optionally, you can add a user menu or button here in the future */}
+      </div>
     </header>
   );
 }
