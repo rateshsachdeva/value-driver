@@ -101,27 +101,27 @@ export function Chat({
 
   // ✅ For MultimodalInput → expects Promise<string | null | undefined>
   const wrappedAppendForMultimodal = async (
-    message: Message | CreateMessage,
-    _chatRequestOptions?: any
-  ): Promise<string | null | undefined> => {
-    let content: string | undefined;
+  message: Message | CreateMessage,
+  _chatRequestOptions?: any
+): Promise<string | null | undefined> => {
+  let content: string | undefined;
 
-    if ('content' in message && typeof message.content === 'string') {
-      content = message.content;
-    } else if ('parts' in message && Array.isArray(message.parts)) {
-      const textPart = message.parts.find((part) => part.type === 'text');
-      if (textPart && 'text' in textPart) {
-        content = textPart.text;
-      }
+  if ('content' in message && typeof message.content === 'string') {
+    content = message.content;
+  } else if ('parts' in message && Array.isArray(message.parts)) {
+    const textPart = message.parts.find((part) => part.type === 'text');
+    if (textPart && 'text' in textPart) {
+      content = textPart.text;
     }
+  }
 
-    if (!content) {
-      console.warn('No text content found in Message or CreateMessage');
-      return null;
-    }
+  if (!content) {
+    console.warn('No text content found in Message or CreateMessage');
+    return null;
+  }
 
-    return await sendMessage(content);
-  };
+  return await sendMessage(content);
+};
 
   // ✅ For Artifact → expects Promise<void>
   const wrappedAppendForArtifact = async (message: CreateMessage): Promise<void> => {
