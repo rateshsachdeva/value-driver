@@ -322,9 +322,7 @@ function PureArtifact({
                     attachments={attachments}
                     setAttachments={setAttachments}
                     messages={messages}
-                    append={async (msg) => {
-                      await append(msg);
-                    }}
+                    append={(msg) => append(msg)}
                     className="bg-background dark:bg-muted"
                     setMessages={setMessages}
                     selectedVisibilityType={selectedVisibilityType}
@@ -436,9 +434,7 @@ function PureArtifact({
                   <Toolbar
                     isToolbarVisible={isToolbarVisible}
                     setIsToolbarVisible={setIsToolbarVisible}
-                    append={async (msg) => {
-                      await append(msg);
-                    }}
+                    append={(msg) => append(msg)}
                     status={status}
                     stop={stop}
                     setMessages={setMessages}
