@@ -87,7 +87,6 @@ function PureArtifact({
   selectedVisibilityType: VisibilityType;
 }) {
   const { artifact, setArtifact, metadata, setMetadata } = useArtifact();
-
   const {
     data: documents,
     isLoading: isDocumentsFetching,
@@ -102,7 +101,6 @@ function PureArtifact({
   const [mode, setMode] = useState<'edit' | 'diff'>('edit');
   const [document, setDocument] = useState<Document | null>(null);
   const [currentVersionIndex, setCurrentVersionIndex] = useState(-1);
-
   const { open: isSidebarOpen } = useSidebar();
 
   useEffect(() => {
@@ -203,7 +201,6 @@ function PureArtifact({
   };
 
   const [isToolbarVisible, setIsToolbarVisible] = useState(false);
-
   const isCurrentVersion =
     documents && documents.length > 0
       ? currentVersionIndex === documents.length - 1
@@ -217,6 +214,8 @@ function PureArtifact({
   );
 
   if (!artifactDefinition) throw new Error('Artifact definition not found!');
+
+  const ContentComponent = artifactDefinition.content;
 
   useEffect(() => {
     if (artifact.documentId !== 'init' && artifactDefinition.initialize) {
@@ -361,28 +360,21 @@ function PureArtifact({
             <div className="p-2 flex flex-row justify-between items-start">
               <div className="flex flex-row gap-4 items-start">
                 <ArtifactCloseButton />
-
                 <div className="flex flex-col">
                   <div className="font-medium">{artifact.title}</div>
-
                   {isContentDirty ? (
-                    <div className="text-sm text-muted-foreground">
-                      Saving changes...
-                    </div>
+                    <div className="text-sm text-muted-foreground">Saving changes...</div>
                   ) : document ? (
                     <div className="text-sm text-muted-foreground">
-                      {`Updated ${formatDistance(
-                        new Date(document.createdAt),
-                        new Date(),
-                        { addSuffix: true },
-                      )}`}
+                      {`Updated ${formatDistance(new Date(document.createdAt), new Date(), {
+                        addSuffix: true,
+                      })}`}
                     </div>
                   ) : (
                     <div className="w-32 h-3 mt-2 bg-muted-foreground/20 rounded-md animate-pulse" />
                   )}
                 </div>
               </div>
-
               <ArtifactActions
                 artifact={artifact}
                 currentVersionIndex={currentVersionIndex}
@@ -395,24 +387,25 @@ function PureArtifact({
             </div>
 
             <div className="dark:bg-muted bg-background h-full overflow-y-scroll !max-w-full items-center">
-              {React.createElement(artifactDefinition.content, {
-                title: artifact.title,
-                content: isCurrentVersion
-                  ? artifact.content
-                  : getDocumentContentById(currentVersionIndex),
-                mode,
-                status: artifact.status,
-                currentVersionIndex,
-                suggestions: [],
-                onSaveContent: saveContent,
-                isInline: false,
-                isCurrentVersion,
-                getDocumentContentById,
-                isLoading: isDocumentsFetching && !artifact.content,
-                metadata,
-                setMetadata,
-              })}
-
+              <ContentComponent
+                title={artifact.title}
+                content={
+                  isCurrentVersion
+                    ? artifact.content
+                    : getDocumentContentById(currentVersionIndex)
+                }
+                mode={mode}
+                status={artifact.status}
+                currentVersionIndex={currentVersionIndex}
+                suggestions={[]}
+                onSaveContent={saveContent}
+                isInline={false}
+                isCurrentVersion={isCurrentVersion}
+                getDocumentContentById={getDocumentContentById}
+                isLoading={isDocumentsFetching && !artifact.content}
+                metadata={metadata}
+                setMetadata={setMetadata}
+              />
               <AnimatePresence>
                 {isCurrentVersion && (
                   <Toolbar
@@ -449,7 +442,6 @@ export const Artifact = memo(PureArtifact, (prevProps, nextProps) => {
   if (!equal(prevProps.votes, nextProps.votes)) return false;
   if (prevProps.input !== nextProps.input) return false;
   if (!equal(prevProps.messages, nextProps.messages)) return false;
-  if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
-    return false;
+  if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType) return false;
   return true;
 });
