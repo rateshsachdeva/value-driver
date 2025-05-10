@@ -17,8 +17,8 @@ export const Greeting = () => {
 
       <p>
         First, I’ll share an Industry Summary and a detailed Value Driver Tree. Then, I’ll check if you’d like a tailored Information Request List.
-
-Just tell me your industry or business, and we’re off!
+        <br />
+        Just tell me your industry or business, and we’re off!
       </p>
 
       {status === 'loading' ? (
@@ -28,19 +28,16 @@ Just tell me your industry or business, and we’re off!
           ✅ You are logged in as <code>{session.user.email}</code>
         </p>
       ) : (
-        <div className="flex gap-4 mt-4">
+        <div className="mt-4 space-y-2">
           <button
             onClick={() => router.push('/login')}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
           >
             Login to your account
           </button>
-          <button
-            onClick={() => router.push('/chat')}
-            className="bg-gray-100 border border-gray-300 px-4 py-2 rounded hover:bg-gray-200 transition"
-          >
-            Continue as Guest
-          </button>
+          <p className="text-sm text-gray-500 mt-2">
+            You may choose to continue as guest with some limitations, like not being able to save chats and limited interactions.
+          </p>
         </div>
       )}
     </div>
