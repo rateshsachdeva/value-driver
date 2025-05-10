@@ -219,7 +219,9 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={wrappedAppendForArtifact}
+        append={async (message) => {
+          await wrappedAppendForMultimodal(message);
+        }}
         messages={messages}
         setMessages={handleSetMessagesForMessagesComponent}
         reload={async () => null}
