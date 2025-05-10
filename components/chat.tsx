@@ -104,7 +104,7 @@ export function Chat({
     _chatRequestOptions?: any
   ): Promise<string | null | undefined> => {
     let content: string | undefined;
-
+  
     if ('content' in message && typeof message.content === 'string') {
       content = message.content;
     } else if ('parts' in message && Array.isArray(message.parts)) {
@@ -113,19 +113,13 @@ export function Chat({
         content = textPart.text;
       }
     }
-
+  
     if (!content) {
       console.warn('No text content found in message');
       return null;
     }
-
+  
     return await sendMessage(content);
-  };
-
-  const wrappedAppendForArtifact = async (
-    message: CreateMessage
-  ): Promise<void> => {
-    await wrappedAppendForMultimodal(message);
   };
 
   useEffect(() => {
@@ -202,7 +196,9 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessagesForMessagesComponent}
-              append={wrappedAppendForMultimodal}
+              append={async (message) => {
+                await wrappedAppendForMultimodal(message);
+              }}
               selectedVisibilityType={visibilityType}
             />
           )}
