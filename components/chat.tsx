@@ -18,7 +18,7 @@ import { useSearchParams } from 'next/navigation';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import type { VisibilityType } from './visibility-selector';
-import type { CreateMessage } from '@ai-sdk/react';
+import type { CreateMessage, ChatRequestOptions } from '@ai-sdk/react';
 
 export function Chat({
   id,
@@ -87,21 +87,25 @@ export function Chat({
         };
         setMessages((prev) => [...prev, assistantMessage]);
         setThreadId(data.threadId);
+        return data.message as string;
       } catch (error: any) {
         toast({ type: 'error', description: error.message || 'Failed to send message.' });
+        return null;
       } finally {
         setLoading(false);
+        mutate(unstable_serialize(getChatHistoryPaginationKey));
       }
-
-      mutate(unstable_serialize(getChatHistoryPaginationKey));
-      return null;
     },
     [mutate, threadId]
   );
 
-  // Wrap sendMessage in the correct append signature
-  const wrappedAppend = async (message: CreateMessage) => {
-    await sendMessage(message.content);
+  // Correctly typed append
+  const wrappedAppend = async (
+    message: Message | CreateMessage,
+    _chatRequestOptions?: ChatRequestOptions
+  ): Promise<string | null | undefined> => {
+    const content = 'content' in message ? message.content : '';
+    return await sendMessage(content);
   };
 
   useEffect(() => {
