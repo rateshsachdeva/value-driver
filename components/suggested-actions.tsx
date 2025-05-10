@@ -73,7 +73,7 @@ function PureSuggestedActions({
                 content: suggestedAction.action,
               });
             }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 flex-col w-full h-auto justify-start items-start whitespace-normal break-words"
+            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 w-full h-auto justify-start whitespace-normal break-words"
           >
             <span className="font-medium">{suggestedAction.title}</span>
             <span className="text-muted-foreground text-sm break-words">
