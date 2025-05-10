@@ -99,16 +99,24 @@ export function Chat({
     [mutate, threadId]
   );
 
-  // For Artifact (expects Promise<void>)
-  const wrappedAppendForArtifact = async (message: CreateMessage): Promise<void> => {
-    await sendMessage(message.content);
-  };
-
-  // For Messages (expects Promise<string | null | undefined>)
-  const wrappedAppendForMessages = async (
+  const wrappedAppend = async (
     message: Message | CreateMessage
   ): Promise<string | null | undefined> => {
-    const content = 'content' in message ? message.content : message.content;
+    let content: string;
+
+    if ('content' in message && typeof message.content === 'string') {
+      content = message.content;
+    } else if ('parts' in message && Array.isArray(message.parts)) {
+      const textPart = message.parts.find((part) => part.type === 'text');
+      if (textPart && 'text' in textPart) {
+        content = textPart.text;
+      } else {
+        throw new Error('Invalid message format: no text content found.');
+      }
+    } else {
+      throw new Error('Invalid message format.');
+    }
+
     return sendMessage(content);
   };
 
@@ -165,7 +173,6 @@ export function Chat({
           reload={async () => null}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
-          append={wrappedAppendForMessages}
         />
         <form
           className="flex mx-auto px-4 bg-background pb-2 md:pb-3 gap-2 w-full md:max-w-3xl"
@@ -187,7 +194,7 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessagesForMessagesComponent}
-              append={wrappedAppendForMessages}
+              append={wrappedAppend}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -208,7 +215,7 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={wrappedAppendForArtifact}
+        append={wrappedAppend}
         messages={messages}
         setMessages={handleSetMessagesForMessagesComponent}
         reload={async () => null}
