@@ -48,8 +48,8 @@ function PureSuggestedActions({
         >
           <Button
             variant="ghost"
-            onClick={async () => {
-              await append({
+            onClick={() => {
+              append({
                 role: 'user',
                 content: suggestedAction.desc,
               });
