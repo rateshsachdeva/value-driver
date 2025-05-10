@@ -12,13 +12,22 @@ import { toast } from 'sonner';
 
 type Metadata = any;
 
+type SheetArtifactData = {
+  content: string;
+  isVisible: boolean;
+  title: string;
+  documentId: string;
+  kind: string;
+  status: string;
+};
+
 export const sheetArtifact = new Artifact<'sheet', Metadata>({
   kind: 'sheet',
   description: 'Useful for working with spreadsheets',
   initialize: async () => {},
   onStreamPart: ({ setArtifact, streamPart }) => {
     if (streamPart.type === 'sheet-delta') {
-      setArtifact((draftArtifact) => ({
+      setArtifact((draftArtifact: SheetArtifactData) => ({
         ...draftArtifact,
         content: streamPart.content as string,
         isVisible: true,
@@ -50,13 +59,7 @@ export const sheetArtifact = new Artifact<'sheet', Metadata>({
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('prev');
       },
-      isDisabled: ({ currentVersionIndex }) => {
-        if (currentVersionIndex === 0) {
-          return true;
-        }
-
-        return false;
-      },
+      isDisabled: ({ currentVersionIndex }) => currentVersionIndex === 0,
     },
     {
       icon: <RedoIcon size={18} />,
@@ -64,26 +67,17 @@ export const sheetArtifact = new Artifact<'sheet', Metadata>({
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('next');
       },
-      isDisabled: ({ isCurrentVersion }) => {
-        if (isCurrentVersion) {
-          return true;
-        }
-
-        return false;
-      },
+      isDisabled: ({ isCurrentVersion }) => isCurrentVersion,
     },
     {
       icon: <CopyIcon />,
       description: 'Copy as .csv',
       onClick: ({ content }) => {
         const parsed = parse<string[]>(content, { skipEmptyLines: true });
-
         const nonEmptyRows = parsed.data.filter((row) =>
           row.some((cell) => cell.trim() !== ''),
         );
-
         const cleanedCsv = unparse(nonEmptyRows);
-
         navigator.clipboard.writeText(cleanedCsv);
         toast.success('Copied csv to clipboard!');
       },
