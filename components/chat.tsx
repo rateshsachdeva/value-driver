@@ -99,12 +99,9 @@ export function Chat({
     [mutate, threadId]
   );
 
-  const wrappedAppendForMultimodal = async (
-    message: Message | CreateMessage,
-    _chatRequestOptions?: any
-  ): Promise<string | null | undefined> => {
+  // Returns Promise<string | null | undefined>
+  const wrappedAppendForArtifact = async (message: Message | CreateMessage) => {
     let content: string | undefined;
-  
     if ('content' in message && typeof message.content === 'string') {
       content = message.content;
     } else if ('parts' in message && Array.isArray(message.parts)) {
@@ -113,13 +110,16 @@ export function Chat({
         content = textPart.text;
       }
     }
-  
     if (!content) {
-      console.warn('No text content found in message');
+      console.warn('No text content found');
       return null;
     }
-  
     return await sendMessage(content);
+  };
+
+  // Returns Promise<void>
+  const wrappedAppendForMultimodal = async (message: Message | CreateMessage) => {
+    await wrappedAppendForArtifact(message);
   };
 
   useEffect(() => {
@@ -196,9 +196,7 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessagesForMessagesComponent}
-              append={async (message) => {
-                await wrappedAppendForMultimodal(message);
-              }}
+              append={wrappedAppendForMultimodal}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -219,9 +217,7 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={(message, chatRequestOptions) => {
-          return wrappedAppendForMultimodal(message, chatRequestOptions).then(() => null);
-        }}
+        append={wrappedAppendForArtifact}
         messages={messages}
         setMessages={handleSetMessagesForMessagesComponent}
         reload={async () => null}
@@ -229,26 +225,6 @@ export function Chat({
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
       />
-✅ What this fixes:
-You avoid the void-to-string type mismatch.
-
-You stay compatible with both Message and CreateMessage.
-
-You preserve type safety across all components.
-
-⚡ If you want:
-I can generate the complete chat.tsx file with this fully integrated.
-
-👉 Just reply “YES, send full chat.tsx” and I’ll paste the entire file for you!
-
-
-
-
-
-
-
-
-
     </>
   );
 }
