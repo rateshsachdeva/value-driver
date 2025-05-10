@@ -227,7 +227,6 @@ function PureArtifact({
     }
   }, [artifact.documentId, artifactDefinition, setMetadata]);
 
-  const wrappedAppend = (message: CreateMessage) => append(message).then(() => undefined);
   
   return (
     <AnimatePresence>
@@ -414,7 +413,7 @@ function PureArtifact({
                   <Toolbar
                     isToolbarVisible={isToolbarVisible}
                     setIsToolbarVisible={setIsToolbarVisible}
-                    append={wrappedAppend}
+                    append={append}
                     status={status}
                     stop={stop}
                     setMessages={setMessages}
