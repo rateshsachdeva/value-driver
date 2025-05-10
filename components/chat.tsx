@@ -99,32 +99,10 @@ export function Chat({
     [mutate, threadId]
   );
 
-  // ✅ For MultimodalInput → expects Promise<string | null | undefined>
   const wrappedAppendForMultimodal = async (
-  message: Message | CreateMessage,
-  _chatRequestOptions?: any
-): Promise<string | null | undefined> => {
-  let content: string | undefined;
-
-  if ('content' in message && typeof message.content === 'string') {
-    content = message.content;
-  } else if ('parts' in message && Array.isArray(message.parts)) {
-    const textPart = message.parts.find((part) => part.type === 'text');
-    if (textPart && 'text' in textPart) {
-      content = textPart.text;
-    }
-  }
-
-  if (!content) {
-    console.warn('No text content found in Message or CreateMessage');
-    return null;
-  }
-
-  return await sendMessage(content);
-};
-
-  // ✅ For Artifact → expects Promise<void>
-  const wrappedAppendForArtifact = async (message: CreateMessage): Promise<void> => {
+    message: Message | CreateMessage,
+    _chatRequestOptions?: any
+  ): Promise<string | null | undefined> => {
     let content: string | undefined;
 
     if ('content' in message && typeof message.content === 'string') {
@@ -137,11 +115,17 @@ export function Chat({
     }
 
     if (!content) {
-      console.warn('No text content found in CreateMessage');
-      return;
+      console.warn('No text content found in message');
+      return null;
     }
 
-    await sendMessage(content);
+    return await sendMessage(content);
+  };
+
+  const wrappedAppendForArtifact = async (
+    message: CreateMessage
+  ): Promise<void> => {
+    await wrappedAppendForMultimodal(message);
   };
 
   useEffect(() => {
