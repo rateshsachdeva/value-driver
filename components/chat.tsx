@@ -181,6 +181,13 @@ export function Chat({
             />
           )}
         </form>
+        {/* ✅ Disclaimer just below input box */}
+        <div className="mx-auto px-4 md:max-w-3xl">
+         <p className="mt-2 text-xs text-muted-foreground text-center">
+            ⚠️ Disclaimer: This is an AI-powered assistant and does not provide professional advice.
+            It’s intended to reduce effort and help with your workload, but always apply professional skepticism before relying on its output.
+         </p>
+        </div>
       </div>
       <Artifact
         chatId={id}
