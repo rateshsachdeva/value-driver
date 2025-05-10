@@ -35,7 +35,7 @@ function PureSuggestedActions({
   return (
     <div
       data-testid="suggested-actions"
-      className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 w-full"
+      className="hidden md:grid grid-cols-2 gap-2 w-full"
     >
       {suggestedActions.map((suggestedAction, index) => (
         <motion.div
@@ -44,7 +44,7 @@ function PureSuggestedActions({
           exit={{ opacity: 0, y: 20 }}
           transition={{ delay: 0.05 * index }}
           key={`suggested-action-${index}`}
-          className={index > 1 ? 'hidden sm:block' : 'block'}
+          className={index > 1 ? 'hidden md:block' : 'block'}
         >
           <Button
             variant="ghost"
