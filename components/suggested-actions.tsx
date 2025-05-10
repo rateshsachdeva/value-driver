@@ -12,23 +12,41 @@ interface SuggestedActionsProps {
   selectedVisibilityType: VisibilityType;
 }
 
+interface SuggestedAction {
+  title: string;
+  label: string;
+  action: string;
+}
+
 function PureSuggestedActions({
   chatId,
   append,
   selectedVisibilityType,
 }: SuggestedActionsProps) {
-  const suggestedActions = [
+  const suggestedActions: SuggestedAction[] = [
     {
-      title: 'The Target is a supplier of food products like fruit concentrates and food coloring to FMCG companies in India. It has acquired many companies in last 5 years',
+      title: 'The Target is',
+      label:
+        'A supplier of food products like fruit concentrates and food coloring to FMCG companies.',
+      action: 'It has acquired many companies in the last 5 years.',
     },
     {
-      title: 'A private equity firm is looking to acquire a fintech startup in the payment aggregation domain. The target has seen significant market share increase in recent past',
+      title: 'A private equity firm',
+      label:
+        'Is looking to acquire a fintech startup in the payment aggregation domain.',
+      action:
+        'The target has seen significant market share increase in the recent past.',
     },
     {
-      title: 'A bus operator in Belgium, Has two revenue streams, Bus charters and individual trips. Challenge: Asset utilization and increasing cost',
+      title: 'A bus operator in Belgium',
+      label:
+        'Has two revenue streams: bus charters and individual trips.',
+      action: 'Challenge: Asset utilization and increasing costs.',
     },
     {
-      title: 'Web development company, based in Spain, Mainly relies on ad-hoc or freelancing projects',
+      title: 'Web development company',
+      label: 'Based in Spain.',
+      action: 'Mainly relies on ad-hoc or freelancing projects.',
     },
   ];
 
@@ -50,16 +68,15 @@ function PureSuggestedActions({
             variant="ghost"
             onClick={async () => {
               window.history.replaceState({}, '', `/chat/${chatId}`);
-
               append({
                 role: 'user',
                 content: suggestedAction.action,
               });
             }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start break-words whitespace-normal"
+            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 flex-col w-full h-auto justify-start items-start whitespace-normal break-words"
           >
             <span className="font-medium">{suggestedAction.title}</span>
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground text-sm break-words">
               {suggestedAction.label}
             </span>
           </Button>
