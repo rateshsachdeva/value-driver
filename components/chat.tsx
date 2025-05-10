@@ -18,6 +18,7 @@ import { useSearchParams } from 'next/navigation';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import type { VisibilityType } from './visibility-selector';
+import { SuggestedActions } from './suggested-actions';
 
 export function Chat({
   id,
@@ -33,7 +34,7 @@ export function Chat({
   initialChatModel: string;
   initialVisibilityType: VisibilityType;
   isReadonly: boolean;
-  session: Session | null; // ✅ allow null safely
+  session: Session | null;
   autoResume: boolean;
 }) {
   const { mutate } = useSWRConfig();
@@ -132,8 +133,9 @@ export function Chat({
     return Promise.resolve(null);
   };
 
-  const handleAppend = (msg: unknown) => {
-    setMessages((prev) => [...prev, msg as UIMessage]);
+  const handleAppend = async (msg: UIMessage) => {
+    setMessages((prev) => [...prev, msg]);
+    sendMessage(msg.content);
     return Promise.resolve(null);
   };
 
@@ -144,7 +146,7 @@ export function Chat({
           chatId={id}
           selectedModelId={initialChatModel}
           isReadonly={isReadonly}
-          session={session} // ✅ pass session (can be null)
+          session={session}
         />
         <Messages
           chatId={id}
@@ -156,6 +158,13 @@ export function Chat({
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
         />
+        <div className="mx-auto w-full md:max-w-3xl px-4">
+          <SuggestedActions
+            chatId={id}
+            append={handleAppend}
+            selectedVisibilityType={visibilityType}
+          />
+        </div>
         <form
           className="flex mx-auto px-4 bg-background pb-2 md:pb-3 gap-2 w-full md:max-w-3xl"
           onSubmit={(e) => {
@@ -181,12 +190,11 @@ export function Chat({
             />
           )}
         </form>
-        {/* ✅ Disclaimer just below input box */}
         <div className="mx-auto px-4 md:max-w-3xl">
-         <p className="mt-1 mb-4 text-xs text-muted-foreground text-center">
+          <p className="mt-1 mb-4 text-xs text-muted-foreground text-center">
             ⚠️ Disclaimer: This is an AI-powered assistant and does not provide professional advice.
             It’s intended to reduce effort and help with your workload, but always apply professional skepticism before relying on its output.
-         </p>
+          </p>
         </div>
       </div>
       <Artifact
