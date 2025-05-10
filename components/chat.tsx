@@ -99,11 +99,18 @@ export function Chat({
     [mutate, threadId]
   );
 
-  // Correctly typed append
-  const wrappedAppend = async (message: CreateMessage): Promise<void> => {
-  await sendMessage(message.content);
+  // For Artifact (expects Promise<void>)
+  const wrappedAppendForArtifact = async (message: CreateMessage): Promise<void> => {
+    await sendMessage(message.content);
   };
-;
+
+  // For Messages (expects Promise<string | null | undefined>)
+  const wrappedAppendForMessages = async (
+    message: Message | CreateMessage
+  ): Promise<string | null | undefined> => {
+    const content = 'content' in message ? message.content : message.content;
+    return sendMessage(content);
+  };
 
   useEffect(() => {
     if (query && !hasAppendedQuery) {
@@ -158,6 +165,7 @@ export function Chat({
           reload={async () => null}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
+          append={wrappedAppendForMessages}
         />
         <form
           className="flex mx-auto px-4 bg-background pb-2 md:pb-3 gap-2 w-full md:max-w-3xl"
@@ -179,7 +187,7 @@ export function Chat({
               setAttachments={setAttachments}
               messages={messages}
               setMessages={handleSetMessagesForMessagesComponent}
-              append={wrappedAppend}
+              append={wrappedAppendForMessages}
               selectedVisibilityType={visibilityType}
             />
           )}
@@ -200,7 +208,7 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={wrappedAppend}
+        append={wrappedAppendForArtifact}
         messages={messages}
         setMessages={handleSetMessagesForMessagesComponent}
         reload={async () => null}
