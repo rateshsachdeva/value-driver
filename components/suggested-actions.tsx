@@ -24,7 +24,7 @@ function PureSuggestedActions({
       action: 'It has acquired many companies in last 5 years',
     },
     {
-      title: 'A private equity firm,
+      title: 'A private equity firm',
       label: `is looking to acquire a fintech startup in the payment agregation domain`,
       action: `the target has seen significant market share increae in recent past`,
     },
