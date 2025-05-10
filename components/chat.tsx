@@ -100,13 +100,10 @@ export function Chat({
   );
 
   // Correctly typed append
-  const wrappedAppend = async (
-    message: Message | CreateMessage,
-    _chatRequestOptions?: any
-  ): Promise<string | null | undefined> => {
-    const content = 'content' in message ? message.content : '';
-    return await sendMessage(content);
+  const wrappedAppend = async (message: CreateMessage): Promise<void> => {
+  await sendMessage(message.content);
   };
+;
 
   useEffect(() => {
     if (query && !hasAppendedQuery) {
