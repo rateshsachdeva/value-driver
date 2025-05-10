@@ -35,12 +35,6 @@ export const Greeting = () => {
           >
             Login to your account
           </button>
-          <button
-            onClick={() => router.push('/')}
-            className="bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-600 transition"
-          >
-            Continue as Guest
-          </button>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
             You can continue as guest, but saving chats and some features will be limited.
           </p>
