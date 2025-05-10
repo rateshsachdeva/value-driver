@@ -16,17 +16,23 @@ import {
   ConsoleOutputContent,
 } from '@/components/console';
 
+type ArtifactType = {
+  content: string;
+  isVisible: boolean;
+  title: string;
+  documentId: string;
+  kind: string;
+  status: string;
+};
+
 const OUTPUT_HANDLERS = {
   matplotlib: `
     import io
     import base64
     from matplotlib import pyplot as plt
 
-    # Clear any existing plots
     plt.clf()
     plt.close('all')
-
-    # Switch to agg backend
     plt.switch_backend('agg')
 
     def setup_matplotlib_output():
@@ -54,11 +60,9 @@ const OUTPUT_HANDLERS = {
 
 function detectRequiredHandlers(code: string): string[] {
   const handlers: string[] = ['basic'];
-
   if (code.includes('matplotlib') || code.includes('plt.')) {
     handlers.push('matplotlib');
   }
-
   return handlers;
 }
 
@@ -77,7 +81,7 @@ export const codeArtifact = new Artifact<'code', Metadata>({
   },
   onStreamPart: ({ streamPart, setArtifact }) => {
     if (streamPart.type === 'code-delta') {
-      setArtifact((draftArtifact) => ({
+      setArtifact((draftArtifact: ArtifactType) => ({
         ...draftArtifact,
         content: streamPart.content as string,
         isVisible:
@@ -96,7 +100,6 @@ export const codeArtifact = new Artifact<'code', Metadata>({
         <div className="px-1">
           <CodeEditor {...props} />
         </div>
-
         {metadata?.outputs && (
           <Console
             consoleOutputs={metadata.outputs}
@@ -171,7 +174,6 @@ export const codeArtifact = new Artifact<'code', Metadata>({
               await currentPyodideInstance.runPythonAsync(
                 OUTPUT_HANDLERS[handler as keyof typeof OUTPUT_HANDLERS],
               );
-
               if (handler === 'matplotlib') {
                 await currentPyodideInstance.runPythonAsync(
                   'setup_matplotlib_output()',
@@ -215,11 +217,7 @@ export const codeArtifact = new Artifact<'code', Metadata>({
         handleVersionChange('prev');
       },
       isDisabled: ({ currentVersionIndex }) => {
-        if (currentVersionIndex === 0) {
-          return true;
-        }
-
-        return false;
+        return currentVersionIndex === 0;
       },
     },
     {
@@ -229,11 +227,7 @@ export const codeArtifact = new Artifact<'code', Metadata>({
         handleVersionChange('next');
       },
       isDisabled: ({ isCurrentVersion }) => {
-        if (isCurrentVersion) {
-          return true;
-        }
-
-        return false;
+        return isCurrentVersion;
       },
     },
     {
