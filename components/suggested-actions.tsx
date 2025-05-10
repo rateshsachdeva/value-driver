@@ -19,16 +19,16 @@ function PureSuggestedActions({
 }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      description: 'The Target is a supplier of food products like fruit concentrates and food coloring to FMCG companies in India. It has acquired many companies in last 5 years',
+      title: 'The Target is a supplier of food products like fruit concentrates and food coloring to FMCG companies in India. It has acquired many companies in last 5 years',
     },
     {
-      description: 'A private equity firm is looking to acquire a fintech startup in the payment aggregation domain. The target has seen significant market share increase in recent past',
+      title: 'A private equity firm is looking to acquire a fintech startup in the payment aggregation domain. The target has seen significant market share increase in recent past',
     },
     {
-      description: 'A bus operator in Belgium, Has two revenue streams, Bus charters and individual trips. Challenge: Asset utilization and increasing cost',
+      title: 'A bus operator in Belgium, Has two revenue streams, Bus charters and individual trips. Challenge: Asset utilization and increasing cost',
     },
     {
-      description: 'Web development company, based in Spain, Mainly relies on ad-hoc or freelancing projects',
+      title: 'Web development company, based in Spain, Mainly relies on ad-hoc or freelancing projects',
     },
   ];
 
