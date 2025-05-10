@@ -19,24 +19,24 @@ function PureSuggestedActions({
 }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      title: 'What are the advantages',
-      label: 'of using Next.js?',
-      action: 'What are the advantages of using Next.js?',
+      title: 'The Target is',
+      label: 'a supplier of food products like fruit concetrates and food coloring to FMCG companies?',
+      action: 'It has acquired many companies in last 5 years',
     },
     {
-      title: 'Write code to',
-      label: `demonstrate djikstra's algorithm`,
-      action: `Write code to demonstrate djikstra's algorithm`,
+      title: 'A private equity firm,
+      label: `is looking to acquire a fintech startup in the payment agregation domain`,
+      action: `the target has seen significant market share increae in recent past`,
     },
     {
-      title: 'Help me write an essay',
-      label: `about silicon valley`,
-      action: `Help me write an essay about silicon valley`,
+      title: 'A bus operator in Belgium',
+      label: `Has two revenue strems, Bus charters and individual trips `,
+      action: `Chalenge : Asset utilsation and increasing cost`,
     },
     {
-      title: 'What is the weather',
-      label: 'in San Francisco?',
-      action: 'What is the weather in San Francisco?',
+      title: 'Web develepoment company',
+      label: 'based in Spain',
+      action: 'Mainly relies on ad-hock or freelancing projects',
     },
   ];
 
