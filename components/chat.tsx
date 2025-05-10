@@ -18,7 +18,7 @@ import { useSearchParams } from 'next/navigation';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import type { VisibilityType } from './visibility-selector';
-import type { CreateMessage, ChatRequestOptions } from '@ai-sdk/react';
+import type { CreateMessage } from '@ai-sdk/react';
 
 export function Chat({
   id,
@@ -102,7 +102,7 @@ export function Chat({
   // Correctly typed append
   const wrappedAppend = async (
     message: Message | CreateMessage,
-    _chatRequestOptions?: ChatRequestOptions
+    _chatRequestOptions?: any
   ): Promise<string | null | undefined> => {
     const content = 'content' in message ? message.content : '';
     return await sendMessage(content);
