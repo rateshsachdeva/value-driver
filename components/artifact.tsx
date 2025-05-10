@@ -107,7 +107,6 @@ function PureArtifact({
   useEffect(() => {
     if (documents && documents.length > 0) {
       const mostRecentDocument = documents.at(-1);
-
       if (mostRecentDocument) {
         setDocument(mostRecentDocument);
         setCurrentVersionIndex(documents.length - 1);
@@ -136,7 +135,6 @@ function PureArtifact({
           if (!currentDocuments) return undefined;
 
           const currentDocument = currentDocuments.at(-1);
-
           if (!currentDocument || !currentDocument.content) {
             setIsContentDirty(false);
             return currentDocuments;
@@ -179,7 +177,6 @@ function PureArtifact({
     (updatedContent: string, debounce: boolean) => {
       if (document && updatedContent !== document.content) {
         setIsContentDirty(true);
-
         if (debounce) {
           debouncedHandleContentChange(updatedContent);
         } else {
@@ -208,24 +205,14 @@ function PureArtifact({
       setMode((mode) => (mode === 'edit' ? 'diff' : 'edit'));
     }
 
-    if (type === 'prev') {
-      if (currentVersionIndex > 0) {
-        setCurrentVersionIndex((index) => index - 1);
-      }
-    } else if (type === 'next') {
-      if (currentVersionIndex < documents.length - 1) {
-        setCurrentVersionIndex((index) => index + 1);
-      }
+    if (type === 'prev' && currentVersionIndex > 0) {
+      setCurrentVersionIndex((index) => index - 1);
+    } else if (type === 'next' && currentVersionIndex < documents.length - 1) {
+      setCurrentVersionIndex((index) => index + 1);
     }
   };
 
   const [isToolbarVisible, setIsToolbarVisible] = useState(false);
-
-  /*
-   * NOTE: if there are no documents, or if
-   * the documents are being fetched, then
-   * we mark it as the current version.
-   */
 
   const isCurrentVersion =
     documents && documents.length > 0
@@ -335,7 +322,9 @@ function PureArtifact({
                     attachments={attachments}
                     setAttachments={setAttachments}
                     messages={messages}
-                    append={(msg) => append(msg)}
+                    append={async (msg) => {
+                      await append(msg);
+                    }}
                     className="bg-background dark:bg-muted"
                     setMessages={setMessages}
                     selectedVisibilityType={selectedVisibilityType}
@@ -347,60 +336,33 @@ function PureArtifact({
 
           <motion.div
             className="fixed dark:bg-muted bg-background h-dvh flex flex-col overflow-y-scroll md:border-l dark:border-zinc-700 border-zinc-200"
-            initial={
-              isMobile
-                ? {
-                    opacity: 1,
-                    x: artifact.boundingBox.left,
-                    y: artifact.boundingBox.top,
-                    height: artifact.boundingBox.height,
-                    width: artifact.boundingBox.width,
-                    borderRadius: 50,
-                  }
-                : {
-                    opacity: 1,
-                    x: artifact.boundingBox.left,
-                    y: artifact.boundingBox.top,
-                    height: artifact.boundingBox.height,
-                    width: artifact.boundingBox.width,
-                    borderRadius: 50,
-                  }
-            }
-            animate={
-              isMobile
-                ? {
-                    opacity: 1,
-                    x: 0,
-                    y: 0,
-                    height: windowHeight,
-                    width: windowWidth ? windowWidth : 'calc(100dvw)',
-                    borderRadius: 0,
-                    transition: {
-                      delay: 0,
-                      type: 'spring',
-                      stiffness: 200,
-                      damping: 30,
-                      duration: 5000,
-                    },
-                  }
-                : {
-                    opacity: 1,
-                    x: 400,
-                    y: 0,
-                    height: windowHeight,
-                    width: windowWidth
-                      ? windowWidth - 400
-                      : 'calc(100dvw-400px)',
-                    borderRadius: 0,
-                    transition: {
-                      delay: 0,
-                      type: 'spring',
-                      stiffness: 200,
-                      damping: 30,
-                      duration: 5000,
-                    },
-                  }
-            }
+            initial={{
+              opacity: 1,
+              x: artifact.boundingBox.left,
+              y: artifact.boundingBox.top,
+              height: artifact.boundingBox.height,
+              width: artifact.boundingBox.width,
+              borderRadius: 50,
+            }}
+            animate={{
+              opacity: 1,
+              x: isMobile ? 0 : 400,
+              y: 0,
+              height: windowHeight,
+              width: isMobile
+                ? windowWidth || 'calc(100dvw)'
+                : windowWidth
+                ? windowWidth - 400
+                : 'calc(100dvw-400px)',
+              borderRadius: 0,
+              transition: {
+                delay: 0,
+                type: 'spring',
+                stiffness: 200,
+                damping: 30,
+                duration: 5000,
+              },
+            }}
             exit={{
               opacity: 0,
               scale: 0.5,
@@ -428,9 +390,7 @@ function PureArtifact({
                       {`Updated ${formatDistance(
                         new Date(document.createdAt),
                         new Date(),
-                        {
-                          addSuffix: true,
-                        },
+                        { addSuffix: true },
                       )}`}
                     </div>
                   ) : (
@@ -476,7 +436,9 @@ function PureArtifact({
                   <Toolbar
                     isToolbarVisible={isToolbarVisible}
                     setIsToolbarVisible={setIsToolbarVisible}
-                    append={(msg) => append(msg)}
+                    append={async (msg) => {
+                      await append(msg);
+                    }}
                     status={status}
                     stop={stop}
                     setMessages={setMessages}
