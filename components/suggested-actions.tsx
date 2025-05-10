@@ -12,41 +12,23 @@ interface SuggestedActionsProps {
   selectedVisibilityType: VisibilityType;
 }
 
-interface SuggestedAction {
-  title: string;
-  label: string;
-  action: string;
-}
-
 function PureSuggestedActions({
   chatId,
   append,
   selectedVisibilityType,
 }: SuggestedActionsProps) {
-  const suggestedActions: SuggestedAction[] = [
+  const suggestedActions = [
     {
-      title: 'The Target is',
-      label:
-        'A supplier of food products like fruit concentrates and food coloring to FMCG companies.',
-      action: 'It has acquired many companies in the last 5 years.',
+      desc: 'The target is a supplier of food products like fruit concentrates and food coloring to FMCG companies. It has acquired many companies in the last 5 years.',
     },
     {
-      title: 'A private equity firm',
-      label:
-        'Is looking to acquire a fintech startup in the payment aggregation domain.',
-      action:
-        'The target has seen significant market share increase in the recent past.',
+      desc: 'A private equity firm is looking to acquire a fintech startup in the payment aggregation domain. The target has seen significant market share increase in recent past.',
     },
     {
-      title: 'A bus operator in Belgium',
-      label:
-        'Has two revenue streams: bus charters and individual trips.',
-      action: 'Challenge: Asset utilization and increasing costs.',
+      desc: 'A bus operator in Belgium has two revenue streams: bus charters and individual trips. Challenge: Asset utilization and increasing cost.',
     },
     {
-      title: 'Web development company',
-      label: 'Based in Spain.',
-      action: 'Mainly relies on ad-hoc or freelancing projects.',
+      desc: 'Web development company based in Spain, mainly relies on ad-hoc or freelancing projects.',
     },
   ];
 
@@ -61,7 +43,7 @@ function PureSuggestedActions({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ delay: 0.05 * index }}
-          key={`suggested-action-${suggestedAction.title}-${index}`}
+          key={`suggested-action-${index}`}
           className={index > 1 ? 'hidden sm:block' : 'block'}
         >
           <Button
@@ -70,15 +52,12 @@ function PureSuggestedActions({
               window.history.replaceState({}, '', `/chat/${chatId}`);
               append({
                 role: 'user',
-                content: suggestedAction.action,
+                content: suggestedAction.desc,
               });
             }}
             className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 w-full h-auto justify-start whitespace-normal break-words"
           >
-            <span className="font-medium">{suggestedAction.title}</span>
-            <span className="text-muted-foreground text-sm break-words">
-              {suggestedAction.label}
-            </span>
+            {suggestedAction.desc}
           </Button>
         </motion.div>
       ))}
@@ -92,7 +71,6 @@ export const SuggestedActions = memo(
     if (prevProps.chatId !== nextProps.chatId) return false;
     if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
       return false;
-
     return true;
   },
 );
