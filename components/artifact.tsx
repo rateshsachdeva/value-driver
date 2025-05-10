@@ -226,6 +226,7 @@ function PureArtifact({
     }
   }, [artifact.documentId, artifactDefinition, setMetadata]);
 
+  const wrappedAppend = (message) => append(message).then(() => undefined);
   return (
     <AnimatePresence>
       {artifact.isVisible && (
