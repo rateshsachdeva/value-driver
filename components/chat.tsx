@@ -219,8 +219,8 @@ export function Chat({
         stop={() => null}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={async (message) => {
-          await wrappedAppendForMultimodal(message);
+        append={(message, chatRequestOptions) => {
+          return wrappedAppendForMultimodal(message, chatRequestOptions).then(() => null);
         }}
         messages={messages}
         setMessages={handleSetMessagesForMessagesComponent}
@@ -229,6 +229,26 @@ export function Chat({
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
       />
+✅ What this fixes:
+You avoid the void-to-string type mismatch.
+
+You stay compatible with both Message and CreateMessage.
+
+You preserve type safety across all components.
+
+⚡ If you want:
+I can generate the complete chat.tsx file with this fully integrated.
+
+👉 Just reply “YES, send full chat.tsx” and I’ll paste the entire file for you!
+
+
+
+
+
+
+
+
+
     </>
   );
 }
