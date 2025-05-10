@@ -5,12 +5,10 @@ import { Button } from './ui/button';
 import { memo } from 'react';
 import type { UseChatHelpers } from '@ai-sdk/react';
 import type { VisibilityType } from './visibility-selector';
-import { generateUUID } from '@/lib/utils';
-import type { UIMessage } from 'ai';
 
 interface SuggestedActionsProps {
   chatId: string;
-  append: (msg: UIMessage) => Promise<null>;
+  append: (message: string) => Promise<null>;
   selectedVisibilityType: VisibilityType;
 }
 
@@ -46,18 +44,12 @@ function PureSuggestedActions({
           exit={{ opacity: 0, y: 20 }}
           transition={{ delay: 0.05 * index }}
           key={`suggested-action-${index}`}
-          className={index > 1 ? 'hidden md:block' : 'block'}
         >
           <Button
             variant="ghost"
-            onClick={async () => {
+            onClick={() => {
               window.history.replaceState({}, '', `/chat/${chatId}`);
-              await append({
-                id: generateUUID(),
-                role: 'user',
-                content: suggestedAction.desc,
-                parts: [{ type: 'text', text: suggestedAction.desc }],
-              });
+              append(suggestedAction.desc);
             }}
             className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 w-full h-auto justify-start whitespace-normal break-words"
           >
