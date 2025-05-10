@@ -12,8 +12,7 @@ export const Greeting = () => {
   return (
     <div className="max-w-3xl mx-auto md:mt-20 px-8 py-4 text-gray-800 space-y-4">
       <h2 className="text-xl font-semibold">
-        I’m your financial analysis and diligence assistant, designed to bring together the sharp eye of a CPA, 
-        the big-picture thinking of an FP&A leader, and the deal sense of an M&A pro.
+        Hi there — welcome! I’m your financial analysis and diligence assistant.
       </h2>
 
       <p>
