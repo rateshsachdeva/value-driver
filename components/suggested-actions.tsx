@@ -49,8 +49,7 @@ function PureSuggestedActions({
           <Button
             variant="ghost"
             onClick={async () => {
-              window.history.replaceState({}, '', `/chat/${chatId}`);
-              append({
+              await append({
                 role: 'user',
                 content: suggestedAction.desc,
               });
