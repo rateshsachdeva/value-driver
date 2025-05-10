@@ -157,7 +157,7 @@ export function Chat({
           isArtifactVisible={isArtifactVisible}
         />
         <form
-          className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl"
+          className="flex mx-auto px-4 bg-background pb-2 md:pb-3 gap-2 w-full md:max-w-3xl"
           onSubmit={(e) => {
             e.preventDefault();
             sendMessage(input);
@@ -183,7 +183,7 @@ export function Chat({
         </form>
         {/* ✅ Disclaimer just below input box */}
         <div className="mx-auto px-4 md:max-w-3xl">
-         <p className="mt-2 text-xs text-muted-foreground text-center">
+         <p className="mt-1 text-xs text-muted-foreground text-center">
             ⚠️ Disclaimer: This is an AI-powered assistant and does not provide professional advice.
             It’s intended to reduce effort and help with your workload, but always apply professional skepticism before relying on its output.
          </p>
