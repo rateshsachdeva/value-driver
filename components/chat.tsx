@@ -58,7 +58,7 @@ export function Chat({
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   const sendMessage = useCallback(
-    async (userInput: string) => {
+    async (userInput: string): Promise<string | null | undefined> => {
       if (!userInput.trim()) return null;
 
       const userMessage: UIMessage = {
@@ -87,7 +87,7 @@ export function Chat({
         };
         setMessages((prev) => [...prev, assistantMessage]);
         setThreadId(data.threadId);
-        return data.message as string | null | undefined;
+        return data.message;
       } catch (error: any) {
         toast({ type: 'error', description: error.message || 'Failed to send message.' });
         return null;
@@ -99,9 +99,11 @@ export function Chat({
     [mutate, threadId]
   );
 
-  // Corrected wrappedAppend to support both Message and CreateMessage
-  const wrappedAppend = async (message: Message | CreateMessage): Promise<void> => {
-    let content: string;
+  // ✅ Expert-level robust append that handles both Message and CreateMessage
+  const wrappedAppend = async (
+    message: Message | CreateMessage
+  ): Promise<string | null | undefined> => {
+    let content: string | undefined;
 
     if ('content' in message && typeof message.content === 'string') {
       content = message.content;
@@ -109,14 +111,15 @@ export function Chat({
       const textPart = message.parts.find((part) => part.type === 'text');
       if (textPart && 'text' in textPart) {
         content = textPart.text;
-      } else {
-        throw new Error('Invalid message format: no text content found.');
       }
-    } else {
-      throw new Error('Invalid message format.');
     }
 
-    await sendMessage(content);
+    if (!content) {
+      console.warn('No text content found in message');
+      return null;
+    }
+
+    return await sendMessage(content);
   };
 
   useEffect(() => {
