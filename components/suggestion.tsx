@@ -10,18 +10,32 @@ import { CrossIcon, MessageIcon } from './icons';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { ArtifactKind } from './artifact';
+import type { Message, CreateMessage } from '@ai-sdk/react';
+
+interface SuggestionProps {
+  suggestion: UISuggestion;
+  onApply: () => void;
+  artifactKind: ArtifactKind;
+  append: (message: Message | CreateMessage) => Promise<void>;
+}
 
 export const Suggestion = ({
   suggestion,
   onApply,
   artifactKind,
-}: {
-  suggestion: UISuggestion;
-  onApply: () => void;
-  artifactKind: ArtifactKind;
-}) => {
+  append,
+}: SuggestionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { width: windowWidth } = useWindowSize();
+
+  const handleApply = async () => {
+    await append({
+      role: 'user',
+      content: suggestion.description,
+    });
+    onApply();
+    setIsExpanded(false);
+  };
 
   return (
     <AnimatePresence>
@@ -67,7 +81,7 @@ export const Suggestion = ({
           <Button
             variant="outline"
             className="w-fit py-1.5 px-3 rounded-full"
-            onClick={onApply}
+            onClick={handleApply}
           >
             Apply
           </Button>
