@@ -20,23 +20,23 @@ function PureSuggestedActions({
   const suggestedActions = [
     {
       title: 'The Target is',
-      label: 'a supplier of food products like fruit concetrates and food coloring to FMCG companies?',
+      label: 'a supplier of food products like fruit concentrates and food coloring to FMCG companies',
       action: 'It has acquired many companies in last 5 years',
     },
     {
       title: 'A private equity firm',
-      label: `is looking to acquire a fintech startup in the payment agregation domain`,
-      action: `the target has seen significant market share increae in recent past`,
+      label: 'is looking to acquire a fintech startup in the payment aggregation domain',
+      action: 'The target has seen significant market share increase in recent past',
     },
     {
       title: 'A bus operator in Belgium',
-      label: `Has two revenue strems, Bus charters and individual trips `,
-      action: `Chalenge : Asset utilsation and increasing cost`,
+      label: 'Has two revenue streams, Bus charters and individual trips',
+      action: 'Challenge: Asset utilization and increasing cost',
     },
     {
-      title: 'Web develepoment company',
+      title: 'Web development company',
       label: 'based in Spain',
-      action: 'Mainly relies on ad-hock or freelancing projects',
+      action: 'Mainly relies on ad-hoc or freelancing projects',
     },
   ];
 
@@ -64,7 +64,7 @@ function PureSuggestedActions({
                 content: suggestedAction.action,
               });
             }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
+            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start break-words whitespace-normal"
           >
             <span className="font-medium">{suggestedAction.title}</span>
             <span className="text-muted-foreground">
