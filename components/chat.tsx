@@ -18,7 +18,7 @@ import { useSearchParams } from 'next/navigation';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import type { VisibilityType } from './visibility-selector';
-import type { CreateMessage } from '@ai-sdk/react';
+import type { CreateMessage, ChatRequestOptions } from '@ai-sdk/react';
 
 export function Chat({
   id,
@@ -99,29 +99,50 @@ export function Chat({
     [mutate, threadId]
   );
 
-  // ✅ Expert-level robust append that handles both Message and CreateMessage
   const wrappedAppend = async (
-  message: Message | CreateMessage,
-  _chatRequestOptions?: any
-): Promise<string | null | undefined> => {
-  let content: string | undefined;
+    message: CreateMessage,
+    _chatRequestOptions?: ChatRequestOptions
+  ): Promise<string | null | undefined> => {
+    let content: string | undefined;
 
-  if ('content' in message && typeof message.content === 'string') {
-    content = message.content;
-  } else if ('parts' in message && Array.isArray(message.parts)) {
-    const textPart = message.parts.find((part) => part.type === 'text');
-    if (textPart && 'text' in textPart) {
-      content = textPart.text;
+    if ('content' in message && typeof message.content === 'string') {
+      content = message.content;
+    } else if ('parts' in message && Array.isArray(message.parts)) {
+      const textPart = message.parts.find((part) => part.type === 'text');
+      if (textPart && 'text' in textPart) {
+        content = textPart.text;
+      }
     }
-  }
 
-  if (!content) {
-    console.warn('No text content found in message');
-    return null;
-  }
+    if (!content) {
+      console.warn('No text content found in CreateMessage');
+      return null;
+    }
 
-  return await sendMessage(content);
-};
+    return await sendMessage(content);
+  };
+
+  const flexibleAppend = async (
+    message: Message | CreateMessage
+  ): Promise<string | null | undefined> => {
+    let content: string | undefined;
+
+    if ('content' in message && typeof message.content === 'string') {
+      content = message.content;
+    } else if ('parts' in message && Array.isArray(message.parts)) {
+      const textPart = message.parts.find((part) => part.type === 'text');
+      if (textPart && 'text' in textPart) {
+        content = textPart.text;
+      }
+    }
+
+    if (!content) {
+      console.warn('No text content found in Message or CreateMessage');
+      return null;
+    }
+
+    return await sendMessage(content);
+  };
 
   useEffect(() => {
     if (query && !hasAppendedQuery) {
