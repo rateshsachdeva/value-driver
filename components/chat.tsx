@@ -87,7 +87,7 @@ export function Chat({
         };
         setMessages((prev) => [...prev, assistantMessage]);
         setThreadId(data.threadId);
-        return data.message as string;
+        return data.message as string | null | undefined;
       } catch (error: any) {
         toast({ type: 'error', description: error.message || 'Failed to send message.' });
         return null;
@@ -99,9 +99,8 @@ export function Chat({
     [mutate, threadId]
   );
 
-  const wrappedAppend = async (
-    message: Message | CreateMessage
-  ): Promise<string | null | undefined> => {
+  // Corrected wrappedAppend to support both Message and CreateMessage
+  const wrappedAppend = async (message: Message | CreateMessage): Promise<void> => {
     let content: string;
 
     if ('content' in message && typeof message.content === 'string') {
@@ -117,7 +116,7 @@ export function Chat({
       throw new Error('Invalid message format.');
     }
 
-    return sendMessage(content);
+    await sendMessage(content);
   };
 
   useEffect(() => {
