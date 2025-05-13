@@ -66,8 +66,16 @@ export function Chat({
         content: userInput,
         parts: [{ type: 'text', text: userInput }],
       };
-      setMessages((prev) => [...prev, userMessage]);
+      const tempAssistantMessage: UIMessage = {
+        id: generateUUID(),
+        role: 'assistant',
+        content: '',
+        parts: [{ type: 'text', text: '' }],
+      };
+      
+      setMessages((prev) => [...prev, userMessage, tempAssistantMessage]);
       setLoading(true);
+
 
       try {
         const res = await fetch('/api/assistant', {
@@ -84,7 +92,11 @@ export function Chat({
           content: data.message,
           parts: [{ type: 'text', text: data.message }],
         };
-        setMessages((prev) => [...prev, assistantMessage]);
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === tempAssistantMessage.id ? assistantMessage : msg
+          )
+        );
         setThreadId(data.threadId);
       } catch (error: any) {
         toast({ type: 'error', description: error.message || 'Failed to send message.' });
