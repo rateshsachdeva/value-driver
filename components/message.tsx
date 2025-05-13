@@ -130,7 +130,16 @@ const PurePreviewMessage = ({
                             message.role === 'user',
                         })}
                       >
-                        <Markdown>{sanitizeText(part.text)}</Markdown>
+                        {isLoading ? (
+                          <div className="flex gap-1 items-center animate-pulse text-muted-foreground text-sm">
+                            <span className="w-2 h-2 bg-muted rounded-full animate-bounce [animation-delay:-0.3s]" />
+                            <span className="w-2 h-2 bg-muted rounded-full animate-bounce [animation-delay:-0.15s]" />
+                            <span className="w-2 h-2 bg-muted rounded-full animate-bounce" />
+                            <span className="ml-2 italic">Assistant is typing...</span>
+                          </div>
+                        ) : (
+                          <Markdown>{sanitizeText(part.text)}</Markdown>
+                        )}
                       </div>
                     </div>
                   );
