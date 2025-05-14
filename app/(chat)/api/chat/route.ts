@@ -33,7 +33,7 @@ import {
   type ResumableStreamContext,
 } from 'resumable-stream';
 import { after } from 'next/server';
-import type { Chat } from '@/lib/db/schema';
+import type { chat } from '@/lib/db/schema';
 import { differenceInSeconds } from 'date-fns';
 
 export const maxDuration = 60;
