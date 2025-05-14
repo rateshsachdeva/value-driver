@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai'; // ESLint warning, but works fine
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth'; // or wherever your NextAuth config is
+import { db } from '@/lib/db'; // or wherever your DB client is
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
