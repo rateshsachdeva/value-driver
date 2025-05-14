@@ -49,8 +49,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       // Note: content will soon be deprecated in @ai-sdk/react
       content: '',
       createdAt: message.createdAt,
-      experimental_attachments:
-        (message.attachments as Array<Attachment>) ?? [],
+      experimental_attachments: [], // safely ignore missing attachments
     }));
   }
 
