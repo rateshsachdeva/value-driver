@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 import { auth } from '@/app/(auth)/auth';
 
 import { db } from '@/lib/db/client';
-import { chat, chatMessage } from '@/lib/db/schema';
+import { chat, message as chatMessage } from '@/lib/db/schema'; // ✅ fixed here
 import { randomUUID } from 'crypto';
 
 const openai = new OpenAI({
@@ -58,7 +58,6 @@ export async function POST(req: NextRequest) {
   if (session?.user?.id) {
     const chatId = randomUUID();
 
-    // Save Chat
     await db.insert(chat).values({
       id: chatId,
       userId: session.user.id,
@@ -67,7 +66,6 @@ export async function POST(req: NextRequest) {
       visibility: 'private',
     });
 
-    // Save both messages
     await db.insert(chatMessage).values([
       {
         id: randomUUID(),
