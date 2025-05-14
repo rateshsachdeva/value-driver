@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { getServerSession } from 'next-auth';
 import { auth } from '@/app/(auth)/auth';
 
 import { db } from '@/lib/db/client';
-import { chat, message as messageTable } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { chat, chatMessage } from '@/lib/db/schema';
 import { randomUUID } from 'crypto';
 
 const openai = new OpenAI({
@@ -56,11 +54,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ✅ Save chat + messages if user is signed in
+  // ✅ Save chat and messages only if user is signed in
   if (session?.user?.id) {
-    const chatId = randomUUID(); // generate a stable ID
+    const chatId = randomUUID();
 
-    // 1. Insert into chat table
+    // Save Chat
     await db.insert(chat).values({
       id: chatId,
       userId: session.user.id,
@@ -69,8 +67,8 @@ export async function POST(req: NextRequest) {
       visibility: 'private',
     });
 
-    // 2. Insert both messages
-    await db.insert(messageTable).values([
+    // Save both messages
+    await db.insert(chatMessage).values([
       {
         id: randomUUID(),
         chatId,
