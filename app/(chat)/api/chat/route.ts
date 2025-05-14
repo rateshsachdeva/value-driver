@@ -265,7 +265,8 @@ export async function GET(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  let chat: Chat;
+  import { chat } from '@/lib/db/schema';
+  let chat: typeof chat.$inferSelect;
 
   try {
     chat = await getChatById({ id: chatId });
