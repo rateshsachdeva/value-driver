@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai'; // ESLint warning, but works fine
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth'; // or wherever your NextAuth config is
-import { db } from '@/lib/db'; // or wherever your DB client is
+import { db } from '@/lib/db/client';
+import { chat } from '@/lib/db/schema'; // Assuming you want to insert into Chat table
 
 
 const openai = new OpenAI({
