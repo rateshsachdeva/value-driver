@@ -131,19 +131,14 @@ const PurePreviewMessage = ({
                         })}
                       >
                         {isLoading ? (
-                          <div className="flex flex-col gap-2 bg-gradient-to-r from-blue-50 to-violet-100 px-4 py-3 rounded-xl shadow-md w-fit max-w-[90%]">
-                            <div className="flex items-center gap-2">
-                              <div className="flex gap-1">
-                                <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.3s]" />
-                                <span className="w-2 h-2 rounded-full bg-violet-500 animate-bounce [animation-delay:-0.15s]" />
-                                <span className="w-2 h-2 rounded-full bg-pink-500 animate-bounce" />
-                              </div>
-                              <span className="text-sm text-gray-600 italic">Please wait.. I am working on your request...</span>
-                            </div>
+                          <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-100 to-purple-200 px-4 py-3 rounded-xl shadow-md w-fit max-w-[90%]">
+                            <div className="loader" />
+                            <span className="text-sm text-gray-700 italic">Assistant is thinking...</span>
                           </div>
                         ) : (
                           <Markdown>{sanitizeText(part.text)}</Markdown>
                         )}
+
                       </div>
                     </div>
                   );
