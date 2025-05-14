@@ -7,7 +7,7 @@ import { getChatById, getMessagesByChatId } from '@/lib/db/queries';
 import { DataStreamHandler } from '@/components/data-stream-handler';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { message } from '@/lib/db/schema';
-import type { Attachment, UIMessage } from 'ai';
+import type { Attachment, UIMessage, VisibilityType } from 'ai';
 
 // Define DBMessage type inline
 type DBMessage = typeof message.$inferSelect;
@@ -55,6 +55,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   const cookieStore = await cookies();
   const chatModelFromCookie = cookieStore.get('chat-model');
+  const visibilityType = chat.visibility as VisibilityType;
 
   if (!chatModelFromCookie) {
     return (
@@ -63,7 +64,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           id={chat.id}
           initialMessages={convertToUIMessages(messagesFromDb)}
           initialChatModel={DEFAULT_CHAT_MODEL}
-          initialVisibilityType={chat.visibility}
+          initialVisibilityType={visibilityType}
           isReadonly={session?.user?.id !== chat.userId}
           session={session}
           autoResume={true}
@@ -79,7 +80,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         id={chat.id}
         initialMessages={convertToUIMessages(messagesFromDb)}
         initialChatModel={chatModelFromCookie.value}
-        initialVisibilityType={chat.visibility}
+        initialVisibilityType={visibilityType}
         isReadonly={session?.user?.id !== chat.userId}
         session={session}
         autoResume={true}
