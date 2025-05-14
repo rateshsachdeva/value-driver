@@ -4,7 +4,9 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 import { db } from '@/lib/db/client';
-import { chat } from '@/lib/db/schema';
+import { chat, message as messageTable } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
+import { randomUUID } from 'crypto';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -12,7 +14,6 @@ const openai = new OpenAI({
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-
   const { message, threadId } = await req.json();
 
   const thread = threadId
@@ -55,14 +56,36 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ✅ Save chat only if the user is signed in
+  // ✅ Save chat + messages if user is signed in
   if (session?.user?.id) {
+    const chatId = randomUUID(); // generate a stable ID
+
+    // 1. Insert into chat table
     await db.insert(chat).values({
-      userId: session.user.id,               // assumes user.id is UUID in your DB
+      id: chatId,
+      userId: session.user.id,
       createdAt: new Date(),
-      title: message.slice(0, 50),           // optional: short preview as title
+      title: message.slice(0, 50),
       visibility: 'private',
     });
+
+    // 2. Insert both messages
+    await db.insert(messageTable).values([
+      {
+        id: randomUUID(),
+        chatId,
+        role: 'user',
+        content: message,
+        createdAt: new Date(),
+      },
+      {
+        id: randomUUID(),
+        chatId,
+        role: 'assistant',
+        content: text,
+        createdAt: new Date(),
+      },
+    ]);
   }
 
   return NextResponse.json({
