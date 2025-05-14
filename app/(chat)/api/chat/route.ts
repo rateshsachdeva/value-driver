@@ -33,7 +33,8 @@ import {
   type ResumableStreamContext,
 } from 'resumable-stream';
 import { after } from 'next/server';
-import type { chat } from '@/lib/db/schema';
+
+import { chat } from '@/lib/db/schema';
 import { differenceInSeconds } from 'date-fns';
 
 export const maxDuration = 60;
@@ -265,7 +266,6 @@ export async function GET(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  import { chat } from '@/lib/db/schema';
   let chat: typeof chat.$inferSelect;
 
   try {
