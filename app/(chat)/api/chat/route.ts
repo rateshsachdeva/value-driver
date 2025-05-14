@@ -266,10 +266,10 @@ export async function GET(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  let chat: typeof chat.$inferSelect;
+  let chatRow: typeof chat.$inferSelect;
 
   try {
-    chat = await getChatById({ id: chatId });
+    chatRow = await getChatById({ id: chatId });
   } catch {
     return new Response('Not found', { status: 404 });
   }
