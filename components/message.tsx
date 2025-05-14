@@ -133,7 +133,7 @@ const PurePreviewMessage = ({
                         {isLoading ? (
                           <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-100 to-purple-200 px-4 py-3 rounded-xl shadow-md w-fit max-w-[90%]">
                             <div className="loader" />
-                            <span className="text-sm text-gray-700 italic">Assistant is thinking...</span>
+                            <span className="text-sm text-gray-700 italic"> Please wait... I am working on your request.. it will only take few more seconds....</span>
                           </div>
                         ) : (
                           <Markdown>{sanitizeText(part.text)}</Markdown>
@@ -265,7 +265,7 @@ export const ThinkingMessage = () => {
       <span className="w-2 h-2 bg-muted rounded-full animate-bounce [animation-delay:-0.3s]"></span>
       <span className="w-2 h-2 bg-muted rounded-full animate-bounce [animation-delay:-0.15s]"></span>
       <span className="w-2 h-2 bg-muted rounded-full animate-bounce"></span>
-      <span className="ml-2 italic text-xs">Assistant is typing...</span>
+      <span className="ml-2 italic text-xs"> Work in progress...</span>
     </div>
   );
 };
