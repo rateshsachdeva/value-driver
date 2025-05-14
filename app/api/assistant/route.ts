@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/app/(auth)/auth';
 
 import { db } from '@/lib/db/client';
 import { chat, message as messageTable } from '@/lib/db/schema';
@@ -13,7 +13,7 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const { message, threadId } = await req.json();
 
   const thread = threadId
