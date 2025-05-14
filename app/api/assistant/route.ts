@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai'; // ESLint warning, but works fine
+import OpenAI from 'openai';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth'; // or wherever your NextAuth config is
-import { db } from '@/lib/db/client';
-import { chat } from '@/lib/db/schema'; // Assuming you want to insert into Chat table
+import { authOptions } from '@/lib/auth';
 
+import { db } from '@/lib/db/client';
+import { chat } from '@/lib/db/schema';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
   const { message, threadId } = await req.json();
 
   const thread = threadId
@@ -51,6 +53,16 @@ export async function POST(req: NextRequest) {
     ) {
       text = textContent.text.value as string;
     }
+  }
+
+  // ✅ Save chat only if the user is signed in
+  if (session?.user?.id) {
+    await db.insert(chat).values({
+      userId: session.user.id,               // assumes user.id is UUID in your DB
+      createdAt: new Date(),
+      title: message.slice(0, 50),           // optional: short preview as title
+      visibility: 'private',
+    });
   }
 
   return NextResponse.json({
