@@ -25,6 +25,7 @@ import {
 } from './icons';
 import { memo } from 'react';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
+import { VISIBILITY_TYPES, type VisibilityType } from '@/lib/db/schema';
 
 const PureChatItem = ({
   chat,
@@ -37,19 +38,18 @@ const PureChatItem = ({
   onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
 }) => {
+  // Calculate initialVisibilityType before using the hook
+  const fallbackVisibility: VisibilityType = 'private';
+  const isValidVisibility = VISIBILITY_TYPES.includes(
+    chat.visibility as VisibilityType
+  );
+  const initialVisibilityType: VisibilityType = isValidVisibility
+    ? (chat.visibility as VisibilityType)
+    : fallbackVisibility;
+
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
-    import { VISIBILITY_TYPES, type VisibilityType } from '@/lib/db/schema';
-
-    const fallbackVisibility: VisibilityType = 'private';
-    const isValidVisibility = VISIBILITY_TYPES.includes(
-      chat.visibility as VisibilityType
-    );
-    
-    initialVisibilityType: isValidVisibility
-      ? (chat.visibility as VisibilityType)
-      : fallbackVisibility,
-
+    initialVisibilityType,
   });
 
   return (
