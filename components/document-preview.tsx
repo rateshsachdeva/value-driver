@@ -247,15 +247,18 @@ const DocumentHeader = memo(PureDocumentHeader, (prevProps, nextProps) => {
 const DocumentContent = ({ document }: { document: ExtendedDocument }) => {
   const { artifact } = useArtifact();
 
+  // ✅ Safely narrow before use
+  if (!document || !('kind' in document)) {
+    return null;
+  }
+
   const containerClassName = cn(
     'h-[257px] overflow-y-scroll border rounded-b-2xl dark:bg-muted border-t-0 dark:border-zinc-700',
     {
-      'p-4 sm:px-14 sm:py-16': document && 'kind' in document && document.kind === 'text',
-      'p-0': document && 'kind' in document && document.kind === 'code',
+      'p-4 sm:px-14 sm:py-16': document.kind === 'text',
+      'p-0': document.kind === 'code',
     },
   );
-
-
 
   const commonProps = {
     content: document.content ?? '',
@@ -295,3 +298,4 @@ const DocumentContent = ({ document }: { document: ExtendedDocument }) => {
     </div>
   );
 };
+
