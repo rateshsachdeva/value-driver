@@ -7,6 +7,8 @@ import {
 } from 'drizzle-orm/pg-core';
 
 // TABLE: chat
+export const VISIBILITY_TYPES = ['private', 'public'] as const;
+export type VisibilityType = (typeof VISIBILITY_TYPES)[number];
 export const chat = pgTable('Chat', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   userId: varchar('userId', { length: 256 }).notNull(),
