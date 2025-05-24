@@ -22,6 +22,15 @@ import equal from 'fast-deep-equal';
 import { SpreadsheetEditor } from './sheet-editor';
 import { ImageEditor } from './image-editor';
 
+// 👇 Extended type allows custom streaming fallback shape
+type ExtendedDocument =
+  | (Omit<Document, 'chatId'> & {
+      kind: 'text' | 'code' | 'image' | 'sheet';
+      userId: string;
+    })
+  | Document
+  | null;
+
 interface DocumentPreviewProps {
   isReadonly: boolean;
   result?: any;
@@ -81,10 +90,10 @@ export function DocumentPreview({
   }
 
   if (isDocumentsFetching) {
-    return <LoadingSkeleton artifactKind={result.kind ?? args.kind} />;
+    return <LoadingSkeleton artifactKind={result?.kind ?? args?.kind} />;
   }
 
-  const document: Document | null = previewDocument
+  const document: ExtendedDocument = previewDocument
     ? previewDocument
     : artifact.status === 'streaming'
       ? {
@@ -195,8 +204,7 @@ const PureHitboxLayer = ({
 };
 
 const HitboxLayer = memo(PureHitboxLayer, (prevProps, nextProps) => {
-  if (!equal(prevProps.result, nextProps.result)) return false;
-  return true;
+  return equal(prevProps.result, nextProps.result);
 });
 
 const PureDocumentHeader = ({
@@ -228,13 +236,13 @@ const PureDocumentHeader = ({
 );
 
 const DocumentHeader = memo(PureDocumentHeader, (prevProps, nextProps) => {
-  if (prevProps.title !== nextProps.title) return false;
-  if (prevProps.isStreaming !== nextProps.isStreaming) return false;
-
-  return true;
+  return (
+    prevProps.title === nextProps.title &&
+    prevProps.isStreaming === nextProps.isStreaming
+  );
 });
 
-const DocumentContent = ({ document }: { document: Document }) => {
+const DocumentContent = ({ document }: { document: ExtendedDocument }) => {
   const { artifact } = useArtifact();
 
   const containerClassName = cn(
