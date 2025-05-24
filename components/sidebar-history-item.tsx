@@ -39,7 +39,17 @@ const PureChatItem = ({
 }) => {
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
-    initialVisibilityType: chat.visibility,
+    import { VISIBILITY_TYPES, type VisibilityType } from '@/lib/db/schema';
+
+    const fallbackVisibility: VisibilityType = 'private';
+    const isValidVisibility = VISIBILITY_TYPES.includes(
+      chat.visibility as VisibilityType
+    );
+    
+    initialVisibilityType: isValidVisibility
+      ? (chat.visibility as VisibilityType)
+      : fallbackVisibility,
+
   });
 
   return (
