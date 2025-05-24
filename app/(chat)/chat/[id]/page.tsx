@@ -8,7 +8,7 @@ import { DataStreamHandler } from '@/components/data-stream-handler';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { message } from '@/lib/db/schema';
 import type { Attachment, UIMessage } from 'ai';
-import type { VisibilityType } from '@/lib/db/schema';
+import type { VisibilityType } from '@/components/visibility-selector';
 
 // Define DBMessage type inline
 type DBMessage = typeof message.$inferSelect;
