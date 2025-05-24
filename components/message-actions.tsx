@@ -36,6 +36,7 @@ export function PureMessageActions({
   return (
     <TooltipProvider delayDuration={0}>
       <div className="flex flex-row gap-2">
+        {/* Copy Button */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -63,6 +64,7 @@ export function PureMessageActions({
           <TooltipContent>Copy</TooltipContent>
         </Tooltip>
 
+        {/* Upvote Button */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -88,22 +90,19 @@ export function PureMessageActions({
                       (currentVotes) => {
                         if (!currentVotes) return [];
 
-                        const votesWithoutCurrent = currentVotes.filter(
-                          (vote) => vote.messageId !== message.id,
-                        );
-
                         return [
-                          ...votesWithoutCurrent,
+                          ...currentVotes.filter(
+                            (v) => v.messageId !== message.id
+                          ),
                           {
-                            chatId,
+                            id: 'temp-id-up',
+                            userId: 'temp-user', // Replace with actual userId from session
                             messageId: message.id,
-                            isUpvoted: true,
                           },
                         ];
                       },
-                      { revalidate: false },
+                      { revalidate: false }
                     );
-
                     return 'Upvoted Response!';
                   },
                   error: 'Failed to upvote response.',
@@ -116,13 +115,14 @@ export function PureMessageActions({
           <TooltipContent>Upvote Response</TooltipContent>
         </Tooltip>
 
+        {/* Downvote Button */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               data-testid="message-downvote"
               className="py-1 px-2 h-fit text-muted-foreground !pointer-events-auto"
+              disabled={!vote}
               variant="outline"
-              disabled={vote && !vote.isUpvoted}
               onClick={async () => {
                 const downvote = fetch('/api/vote', {
                   method: 'PATCH',
@@ -140,23 +140,12 @@ export function PureMessageActions({
                       `/api/vote?chatId=${chatId}`,
                       (currentVotes) => {
                         if (!currentVotes) return [];
-
-                        const votesWithoutCurrent = currentVotes.filter(
-                          (vote) => vote.messageId !== message.id,
+                        return currentVotes.filter(
+                          (v) => v.messageId !== message.id
                         );
-
-                        return [
-                          ...votesWithoutCurrent,
-                          {
-                            chatId,
-                            messageId: message.id,
-                            isUpvoted: false,
-                          },
-                        ];
                       },
-                      { revalidate: false },
+                      { revalidate: false }
                     );
-
                     return 'Downvoted Response!';
                   },
                   error: 'Failed to downvote response.',
@@ -178,7 +167,6 @@ export const MessageActions = memo(
   (prevProps, nextProps) => {
     if (!equal(prevProps.vote, nextProps.vote)) return false;
     if (prevProps.isLoading !== nextProps.isLoading) return false;
-
     return true;
-  },
+  }
 );
