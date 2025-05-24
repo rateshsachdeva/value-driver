@@ -118,9 +118,10 @@ export function DocumentPreview({
       />
       <DocumentHeader
         title={document.title}
-        kind={document.kind}
+        kind={'kind' in document ? document.kind : 'text'}  // fallback
         isStreaming={artifact.status === 'streaming'}
       />
+
       <DocumentContent document={document} />
     </div>
   );
