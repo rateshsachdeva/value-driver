@@ -97,6 +97,7 @@ export const suggestion = pgTable('Suggestion', {
   field: varchar('field', { length: 128 }).notNull(),
   suggestion: text('suggestion').notNull(),
   status: varchar('status', { length: 32 }).notNull(),
+  description: text('description'), // ✅ Add this line
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 });
 
