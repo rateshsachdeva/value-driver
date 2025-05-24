@@ -68,7 +68,7 @@ export function PureMessageActions({
             <Button
               data-testid="message-upvote"
               className="py-1 px-2 h-fit text-muted-foreground !pointer-events-auto"
-              disabled={vote?.isUpvoted}
+              disabled={!!vote}
               variant="outline"
               onClick={async () => {
                 const upvote = fetch('/api/vote', {
